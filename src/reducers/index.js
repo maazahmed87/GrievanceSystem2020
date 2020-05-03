@@ -1,5 +1,5 @@
-import * as actionTypes from "../actions/types";
 import { combineReducers } from "redux";
+import * as actionTypes from "../actions/types";
 
 const initialUserState = {
   currentUser: null,
@@ -11,6 +11,11 @@ const user_reducer = (state = initialUserState, action) => {
     case actionTypes.SET_USER:
       return {
         currentUser: action.payload.currentUser,
+        isLoading: false,
+      };
+    case actionTypes.CLEAR_USER:
+      return {
+        ...initialUserState,
         isLoading: false,
       };
     default:
