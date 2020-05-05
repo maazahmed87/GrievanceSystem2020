@@ -1,23 +1,31 @@
-import React from "react";
+import React, { Fragment } from "react";
 import UserPanel from "./UserPanel";
 import Ticket from "./Ticket";
-import { Menu } from "semantic-ui-react";
+import { Menu, GridColumn, Grid, Row } from "semantic-ui-react";
 
 class SidePanel extends React.Component {
   render() {
     const { currentUser } = this.props;
 
     return (
-      <Menu
-        size="large"
-        inverted
-        fixed="left"
-        vertical
-        style={{ background: "#4c3c4c", fontSize: "1.2rem" }}
-      >
-        <UserPanel currentUser={currentUser} />
-        <Ticket currentUser={currentUser} />
-      </Menu>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={5} stretched>
+            <Menu
+              size="large"
+              vertical
+              stretched
+              style={{ background: "#4c3c4c", fontSize: "1.2rem" }}
+            >
+              <UserPanel currentUser={currentUser} />
+            </Menu>
+          </Grid.Column>
+          <Grid.Column width={2} stretched></Grid.Column>
+          <Grid.Column width={8} stretched>
+            <Ticket currentUser={currentUser} />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

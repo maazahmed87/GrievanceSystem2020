@@ -1,6 +1,6 @@
 import React from "react";
 import firebase from "../firebase";
-import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
+import { Menu, Segment, Card, Icon, Image } from "semantic-ui-react";
 
 class Ticket extends React.Component {
   state = {
@@ -77,18 +77,27 @@ class Ticket extends React.Component {
   displayTickets = (tickets) =>
     tickets.length > 0 &&
     tickets.map((ticket) => (
-      <Menu.Item
-        key={ticket.id}
-        onClick={() => console.log(ticket)}
-        name={ticket.name}
-        style={{ opacity: 0.7 }}
-      >
-        # {ticket.name}
+      <Card key={ticket.id}>
+        <Card.Content>
+          <Card.Header>{ticket.name}</Card.Header>
+          <Card.Meta>
+            <span className="date">Subject: {ticket.subject}</span>
+          </Card.Meta>
+          <Card.Description>Description: {ticket.details}</Card.Description>
+        </Card.Content>
+      </Card>
+    ));
+
+  disTick = (tickets) =>
+    tickets.length > 0 &&
+    tickets.map((ticket) => (
+      <Segment key={ticket.id}>
+        Name: {ticket.name}
         <br />
-        Subject:{ticket.subject}
+        Subject: {ticket.subject}
         <br />
-        Details:{ticket.details}
-      </Menu.Item>
+        Details: {ticket.details}
+      </Segment>
     ));
 
   isFormValid = ({ ticketName, ticketDetails, ticketSubject }) =>
@@ -99,64 +108,9 @@ class Ticket extends React.Component {
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { tickets, modal } = this.state;
+    const { tickets } = this.state;
 
-    return (
-      <React.Fragment>
-        <Menu.Menu style={{ paddingBottom: "2em" }}>
-          <Menu.Item>
-            <span>
-              <Icon name="exchange" /> TICKETS
-            </span>{" "}
-            ({tickets.length}) <Icon name="add" onClick={this.openModal} />
-          </Menu.Item>
-          {this.displayTickets(tickets)}
-        </Menu.Menu>
-
-        {/* Add Channel Modal */}
-        <Modal basic open={modal} onClose={this.closeModal}>
-          <Modal.Header>Add a Ticket</Modal.Header>
-          <Modal.Content>
-            <Form onSubmit={this.handleSubmit}>
-              <Form.Field>
-                <Input
-                  fluid
-                  label="Name of Ticket"
-                  name="ticketName"
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-              <Form.Field>
-                <Input
-                  fluid
-                  label="Subject of Ticket"
-                  name="ticketSubject"
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-
-              <Form.Field>
-                <Input
-                  fluid
-                  label="About the Ticket"
-                  name="ticketDetails"
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-            </Form>
-          </Modal.Content>
-
-          <Modal.Actions>
-            <Button color="green" inverted onClick={this.handleSubmit}>
-              <Icon name="checkmark" /> Add
-            </Button>
-            <Button color="red" inverted onClick={this.closeModal}>
-              <Icon name="remove" /> Cancel
-            </Button>
-          </Modal.Actions>
-        </Modal>
-      </React.Fragment>
-    );
+    return <Segment>{this.displayTickets(tickets)}</Segment>;
   }
 }
 
