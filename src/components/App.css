@@ -2,6 +2,9 @@ html,
 body,
 .app {
   height: 100vh;
-  background: #1b1b1b;
-  padding: 0.1em;
+  background: white;
+}
+
+.white-back {
+  background: white;
 }

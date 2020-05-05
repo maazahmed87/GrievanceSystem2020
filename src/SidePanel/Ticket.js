@@ -108,7 +108,7 @@ class Ticket extends React.Component {
     const { tickets, modal } = this.state;
 
     return (
-      <Container>
+      <Container className="white-back">
         <h2>Tickets</h2>
         <Menu.Menu style={{ paddingBottom: "2em" }}>
           <Menu.Item>
