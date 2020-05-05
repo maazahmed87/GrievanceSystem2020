@@ -1,15 +1,18 @@
-import React from "react";
-import { Grid } from "semantic-ui-react";
+import React, { Fragment } from "react";
+
 import "./App.css";
 import { connect } from "react-redux";
 
-import SidePanel from "../SidePanel/SidePanel";
+import Main from "./Main";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Container from "react-bootstrap/Container";
 
-const App = ({ currentUser }) => (
-  <Grid columns="equal" className="app" style={{ background: "#eee" }}>
-    <SidePanel currentUser={currentUser} />
-  </Grid>
-);
+const App = ({ currentUser }) => {
+  const user = currentUser;
+  console.log(user);
+
+  return <Main currentUser={currentUser} />;
+};
 
 const mapStateToProps = (state) => ({
   currentUser: state.user.currentUser,
