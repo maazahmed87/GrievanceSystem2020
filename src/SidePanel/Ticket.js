@@ -1,6 +1,15 @@
 import React from "react";
 import firebase from "../firebase";
-import { Menu, Segment, Card, Icon, Image } from "semantic-ui-react";
+import {
+  Menu,
+  Card,
+  Icon,
+  Modal,
+  Form,
+  Input,
+  Button,
+} from "semantic-ui-react";
+import Container from "react-bootstrap/Container";
 
 class Ticket extends React.Component {
   state = {
@@ -88,18 +97,6 @@ class Ticket extends React.Component {
       </Card>
     ));
 
-  disTick = (tickets) =>
-    tickets.length > 0 &&
-    tickets.map((ticket) => (
-      <Segment key={ticket.id}>
-        Name: {ticket.name}
-        <br />
-        Subject: {ticket.subject}
-        <br />
-        Details: {ticket.details}
-      </Segment>
-    ));
-
   isFormValid = ({ ticketName, ticketDetails, ticketSubject }) =>
     ticketName && ticketDetails && ticketSubject;
 
@@ -108,9 +105,64 @@ class Ticket extends React.Component {
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { tickets } = this.state;
+    const { tickets, modal } = this.state;
 
-    return <Segment>{this.displayTickets(tickets)}</Segment>;
+    return (
+      <Container>
+        <h2>Tickets</h2>
+        <Menu.Menu style={{ paddingBottom: "2em" }}>
+          <Menu.Item>
+            <span>
+              <Icon name="exchange" /> Create a Ticket
+            </span>{" "}
+            <Icon name="add" onClick={this.openModal} />
+          </Menu.Item>
+        </Menu.Menu>
+        <Modal basic open={modal} onClose={this.closeModal}>
+          <Modal.Header>Create Ticket</Modal.Header>
+          <Modal.Content>
+            <Form onSubmit={this.handleSubmit}>
+              <Form.Field>
+                <Input
+                  fluid
+                  label="Ticket Name"
+                  name="ticketName"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+
+              <Form.Field>
+                <Input
+                  fluid
+                  label="Ticket Subject"
+                  name="ticketSubject"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+
+              <Form.Field>
+                <Input
+                  fluid
+                  label="Ticket Description"
+                  name="ticketDetails"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+            </Form>
+          </Modal.Content>
+
+          <Modal.Actions>
+            <Button color="green" inverted onClick={this.handleSubmit}>
+              <Icon name="checkmark" /> Submit
+            </Button>
+            <Button color="red" inverted onClick={this.closeModal}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
+        {this.displayTickets(tickets)}
+      </Container>
+    );
   }
 }
 

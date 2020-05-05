@@ -57,6 +57,7 @@ class Main extends React.Component {
           </Navbar.Collapse>
         </Navbar>
         <Container fluid>
+          {active === "account" && <h2>Account Section</h2>}
           {active === "tickets" && <Ticket currentUser={currentUser} />}
         </Container>
       </Fragment>
