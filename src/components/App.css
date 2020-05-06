@@ -2,7 +2,7 @@ html,
 body,
 .app {
   height: 100vh;
-  background: white;
+  background: white !important;
 }
 
 .white-back {
