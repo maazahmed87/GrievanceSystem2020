@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import firebase from "../firebase";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
@@ -13,6 +13,7 @@ import {
   Dropdown,
   TextArea,
 } from "semantic-ui-react";
+import Spinner from "../Spinner";
 
 const options = [
   { key: 1, text: "Category 1", value: "category 1" },
@@ -28,6 +29,7 @@ class Ticket extends React.Component {
     ticketDetails: "",
     ticketSubject: "",
     status: "pending",
+    loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
     modal: false,
     value: "",
@@ -57,12 +59,13 @@ class Ticket extends React.Component {
 
   addListeners = () => {
     let loadedTickets = [];
+    this.setState({ loading: true });
     let user = this.state.user;
     this.state.ticketsRef.on("child_added", (snap) => {
       if (user.email === snap.val().createdBy.email) {
         loadedTickets.push(snap.val());
       }
-      this.setState({ tickets: loadedTickets });
+      this.setState({ tickets: loadedTickets, loading: false });
     });
   };
 
@@ -170,7 +173,7 @@ class Ticket extends React.Component {
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { tickets, modal, value } = this.state;
+    const { tickets, modal, value, loading } = this.state;
 
     return (
       <Container className="white-back">
@@ -235,7 +238,11 @@ class Ticket extends React.Component {
           </Modal.Actions>
         </Modal>
         <div className="row justify-content-lg-center">
-          {this.displayTickets(tickets)}
+          {loading ? (
+            <Spinner />
+          ) : (
+            <Fragment>{this.displayTickets(tickets)}</Fragment>
+          )}
         </div>
       </Container>
     );
