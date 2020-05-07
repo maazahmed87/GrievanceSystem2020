@@ -42,3 +42,16 @@
     margin-left: -15rem;
   }
 }
+
+#card-width-min {
+  min-width: 18rem;
+  text-align: justify;
+}
+
+#whiteColor {
+  color: white !important;
+}
+#font-size-card {
+  font-size: 22px;
+  font-weight: bold;
+}

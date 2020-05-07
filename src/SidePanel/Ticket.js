@@ -3,8 +3,22 @@ import firebase from "../firebase";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
-import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
-import { CardColumns } from "reactstrap";
+import {
+  Menu,
+  Icon,
+  Modal,
+  Form,
+  Input,
+  Button,
+  Dropdown,
+  TextArea,
+} from "semantic-ui-react";
+
+const options = [
+  { key: 1, text: "Category 1", value: "category 1" },
+  { key: 2, text: "Category 2", value: "category 2" },
+  { key: 3, text: "Category 3", value: "category 3" },
+];
 
 class Ticket extends React.Component {
   state = {
@@ -13,8 +27,10 @@ class Ticket extends React.Component {
     ticketName: "",
     ticketDetails: "",
     ticketSubject: "",
+    status: "pending",
     ticketsRef: firebase.database().ref("tickets"),
     modal: false,
+    value: "",
     colorValues: [
       "primary",
       "secondary",
@@ -22,7 +38,7 @@ class Ticket extends React.Component {
       "danger",
       "warning",
       "info",
-      "light",
+      "dark",
     ],
     selectColor: "",
   };
@@ -33,15 +49,7 @@ class Ticket extends React.Component {
   }
 
   getRandomColor() {
-    let colors = [
-      "primary",
-      "secondary",
-      "success",
-      "danger",
-      "warning",
-      "info",
-      "dark",
-    ];
+    let colors = ["primary", "success", "danger", "warning", "info", "dark"];
 
     var color = colors[Math.floor(Math.random() * colors.length)];
     return color;
@@ -64,6 +72,8 @@ class Ticket extends React.Component {
       ticketName,
       ticketDetails,
       ticketSubject,
+      value,
+      status,
       user,
     } = this.state;
 
@@ -73,8 +83,10 @@ class Ticket extends React.Component {
       id: key,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       name: ticketName,
+      status: status,
       details: ticketDetails,
       subject: ticketSubject,
+      category: value,
       createdBy: {
         name: user.displayName,
         email: user.email,
@@ -85,7 +97,12 @@ class Ticket extends React.Component {
       .child(key)
       .update(newTicket)
       .then(() => {
-        this.setState({ ticketName: "", ticketDetails: "", ticketSubject: "" });
+        this.setState({
+          ticketName: "",
+          ticketDetails: "",
+          ticketSubject: "",
+          value: "",
+        });
         this.closeModal();
         console.log("ticket added");
       })
@@ -105,34 +122,55 @@ class Ticket extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  handleChangeDrop = (e, { value }) => this.setState({ value });
+
   displayTickets = (tickets) =>
     tickets.length > 0 &&
     tickets.map((ticket) => (
-      <Card
-        style={{ width: "18rem", margin: "10px" }}
-        key={ticket.id}
-        border={this.getRandomColor()}
+      <div
+        className="col-md-auto col-lg-12"
+        id="card-width-min"
+        style={{ color: "white" }}
       >
-        <Card.Body>
-          <Card.Title>{ticket.name}</Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">
-            {ticket.subject}
-          </Card.Subtitle>
-          <Card.Text>{ticket.details}</Card.Text>
-        </Card.Body>
-        <Card.Footer>{moment(ticket.timestamp).fromNow()}</Card.Footer>
-      </Card>
+        <Card
+          style={{ minWidth: "18rem", margin: "10px" }}
+          key={ticket.id}
+          bg={this.getRandomColor()}
+        >
+          <Card.Body>
+            <Card.Title id="font-size-card">{ticket.name}</Card.Title>
+            <Card.Subtitle className="mb-2 ">
+              <strong>Subject: </strong>
+              {ticket.subject}
+            </Card.Subtitle>
+            <Card.Subtitle className="mb-2 ">
+              <strong>Category: </strong>
+              {ticket.category}
+            </Card.Subtitle>
+            <Card.Subtitle className="mb-2 ">
+              <strong>Status: </strong>
+              {ticket.status}
+            </Card.Subtitle>
+            <Card.Text>{ticket.details}</Card.Text>
+          </Card.Body>
+          <Card.Footer>
+            <small className="text-muted" id="whiteColor">
+              Posted {moment(ticket.timestamp).fromNow()}
+            </small>
+          </Card.Footer>
+        </Card>
+      </div>
     ));
 
-  isFormValid = ({ ticketName, ticketDetails, ticketSubject }) =>
-    ticketName && ticketDetails && ticketSubject;
+  isFormValid = ({ ticketName, ticketDetails, ticketSubject, value }) =>
+    ticketName && ticketDetails && ticketSubject && value;
 
   openModal = () => this.setState({ modal: true });
 
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { tickets, modal } = this.state;
+    const { tickets, modal, value } = this.state;
 
     return (
       <Container className="white-back">
@@ -166,12 +204,21 @@ class Ticket extends React.Component {
                   onChange={this.handleChange}
                 />
               </Form.Field>
+              <Form.Field>
+                <Dropdown
+                  onChange={this.handleChangeDrop}
+                  options={options}
+                  placeholder="Select a category"
+                  selection
+                  value={value}
+                />
+              </Form.Field>
 
               <Form.Field>
-                <Input
-                  fluid
-                  label="Ticket Description"
+                <TextArea
                   name="ticketDetails"
+                  placeholder="Tell us more"
+                  style={{ minHeight: 100, maxHeight: 320 }}
                   onChange={this.handleChange}
                 />
               </Form.Field>
@@ -187,7 +234,9 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-        <CardColumns>{this.displayTickets(tickets)}</CardColumns>
+        <div className="row justify-content-lg-center">
+          {this.displayTickets(tickets)}
+        </div>
       </Container>
     );
   }
