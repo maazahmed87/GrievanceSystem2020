@@ -143,7 +143,7 @@ class Register extends React.Component {
                 name="username"
                 icon="user"
                 iconPosition="left"
-                placeholder="Username"
+                placeholder="Full Name"
                 onChange={this.handleChange}
                 value={username}
                 type="text"
