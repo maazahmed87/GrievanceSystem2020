@@ -5,11 +5,12 @@
 /.pnp
 .pnp.js
 /deploy
+/.firebase
 
 # testing
 /coverage
 
-# production
+# production and deploy
 /build
 
 # misc

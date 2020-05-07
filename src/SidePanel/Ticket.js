@@ -1,15 +1,10 @@
 import React from "react";
 import firebase from "../firebase";
-import {
-  Menu,
-  Card,
-  Icon,
-  Modal,
-  Form,
-  Input,
-  Button,
-} from "semantic-ui-react";
+import moment from "moment";
+import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
+import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
+import { CardColumns } from "reactstrap";
 
 class Ticket extends React.Component {
   state = {
@@ -20,10 +15,36 @@ class Ticket extends React.Component {
     ticketSubject: "",
     ticketsRef: firebase.database().ref("tickets"),
     modal: false,
+    colorValues: [
+      "primary",
+      "secondary",
+      "success",
+      "danger",
+      "warning",
+      "info",
+      "light",
+    ],
+    selectColor: "",
   };
 
   componentDidMount() {
     this.addListeners();
+    this.getRandomColor();
+  }
+
+  getRandomColor() {
+    let colors = [
+      "primary",
+      "secondary",
+      "success",
+      "danger",
+      "warning",
+      "info",
+      "dark",
+    ];
+
+    var color = colors[Math.floor(Math.random() * colors.length)];
+    return color;
   }
 
   addListeners = () => {
@@ -50,6 +71,7 @@ class Ticket extends React.Component {
 
     const newTicket = {
       id: key,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
       name: ticketName,
       details: ticketDetails,
       subject: ticketSubject,
@@ -86,14 +108,19 @@ class Ticket extends React.Component {
   displayTickets = (tickets) =>
     tickets.length > 0 &&
     tickets.map((ticket) => (
-      <Card key={ticket.id}>
-        <Card.Content>
-          <Card.Header>{ticket.name}</Card.Header>
-          <Card.Meta>
-            <span className="date">Subject: {ticket.subject}</span>
-          </Card.Meta>
-          <Card.Description>Description: {ticket.details}</Card.Description>
-        </Card.Content>
+      <Card
+        style={{ width: "18rem", margin: "10px" }}
+        key={ticket.id}
+        border={this.getRandomColor()}
+      >
+        <Card.Body>
+          <Card.Title>{ticket.name}</Card.Title>
+          <Card.Subtitle className="mb-2 text-muted">
+            {ticket.subject}
+          </Card.Subtitle>
+          <Card.Text>{ticket.details}</Card.Text>
+        </Card.Body>
+        <Card.Footer>{moment(ticket.timestamp).fromNow()}</Card.Footer>
       </Card>
     ));
 
@@ -160,7 +187,7 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-        {this.displayTickets(tickets)}
+        <CardColumns>{this.displayTickets(tickets)}</CardColumns>
       </Container>
     );
   }
