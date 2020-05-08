@@ -31,7 +31,7 @@ class Ticket extends React.Component {
     status: "pending",
     loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
-    modal: false,
+    modalT: false,
     value: "",
     colorValues: [
       "primary",
@@ -106,7 +106,7 @@ class Ticket extends React.Component {
           ticketSubject: "",
           value: "",
         });
-        this.closeModal();
+        this.closeModalT();
         console.log("ticket added");
       })
       .catch((err) => {
@@ -168,12 +168,12 @@ class Ticket extends React.Component {
   isFormValid = ({ ticketName, ticketDetails, ticketSubject, value }) =>
     ticketName && ticketDetails && ticketSubject && value;
 
-  openModal = () => this.setState({ modal: true });
+  openModalT = () => this.setState({ modalT: true });
 
-  closeModal = () => this.setState({ modal: false });
+  closeModalT = () => this.setState({ modalT: false });
 
   render() {
-    const { tickets, modal, value, loading } = this.state;
+    const { tickets, modalT, value, loading } = this.state;
 
     return (
       <Container className="white-back">
@@ -183,10 +183,10 @@ class Ticket extends React.Component {
             <span>
               <Icon name="exchange" /> Create a Ticket
             </span>{" "}
-            <Icon name="add" onClick={this.openModal} />
+            <Icon name="add" onClick={this.openModalT} />
           </Menu.Item>
         </Menu.Menu>
-        <Modal basic open={modal} onClose={this.closeModal}>
+        <Modal basic open={modalT} onClose={this.closeModalT}>
           <Modal.Header>Create Ticket</Modal.Header>
           <Modal.Content>
             <Form onSubmit={this.handleSubmit}>
@@ -232,7 +232,7 @@ class Ticket extends React.Component {
             <Button color="green" inverted onClick={this.handleSubmit}>
               <Icon name="checkmark" /> Submit
             </Button>
-            <Button color="red" inverted onClick={this.closeModal}>
+            <Button color="red" inverted onClick={this.closeModalT}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
