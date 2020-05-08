@@ -14,6 +14,8 @@ import {
   TextArea,
 } from "semantic-ui-react";
 import Spinner from "../Spinner";
+import FileModal from "./FileModal";
+import ProgressBar from "./ProgressBar";
 
 const options = [
   { key: 1, text: "Category 1", value: "category 1" },
@@ -32,6 +34,7 @@ class Ticket extends React.Component {
     loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
     modalT: false,
+    modal: false,
     value: "",
     colorValues: [
       "primary",
@@ -43,6 +46,10 @@ class Ticket extends React.Component {
       "dark",
     ],
     selectColor: "",
+    postId: "",
+    uploadTask: null,
+    uploadState: "",
+    percentUploaded: 0,
   };
 
   componentDidMount() {
@@ -155,6 +162,21 @@ class Ticket extends React.Component {
               {ticket.status}
             </Card.Subtitle>
             <Card.Text>{ticket.details}</Card.Text>
+            <Button
+              variant="outline-light"
+              onClick={() => this.setState({ postId: ticket.id, modal: true })}
+            >
+              Upload file
+            </Button>
+            <FileModal
+              modal={this.state.modal}
+              closeModal={this.closeModal}
+              uploadFile={this.uploadFile}
+            />
+            <ProgressBar
+              uploadState={this.state.uploadState}
+              percentUploaded={this.state.percentUploaded}
+            />
           </Card.Body>
           <Card.Footer>
             <small className="text-muted" id="whiteColor">
@@ -171,6 +193,10 @@ class Ticket extends React.Component {
   openModalT = () => this.setState({ modalT: true });
 
   closeModalT = () => this.setState({ modalT: false });
+
+  openModal = () => this.setState({ modal: true });
+
+  closeModal = () => this.setState({ modal: false });
 
   render() {
     const { tickets, modalT, value, loading } = this.state;
