@@ -360,7 +360,10 @@ class Ticket extends React.Component {
             </Card.Subtitle>
             <Card.Text>{ticket.details}</Card.Text>
             <Button
+              compact
+              inverted
               variant="outline-light"
+              color="white"
               onClick={() => this.setState({ postId: ticket.id, modal: true })}
             >
               Upload file
