@@ -1,8 +1,11 @@
 import React, { Fragment } from "react";
 import firebase from "../firebase";
+import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
+import Accordion from "react-bootstrap/Accordion";
+import FileLink from "./FileLink";
 import {
   Menu,
   Icon,
@@ -33,6 +36,8 @@ class Ticket extends React.Component {
     status: "pending",
     loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
+    storageRef: firebase.storage().ref(),
+    imagesRef: firebase.database().ref("images"),
     modalT: false,
     modal: false,
     value: "",
@@ -50,12 +55,124 @@ class Ticket extends React.Component {
     uploadTask: null,
     uploadState: "",
     percentUploaded: 0,
+    message: "",
+    errors: [],
   };
 
   componentDidMount() {
     this.addListeners();
     this.getRandomColor();
   }
+
+  createMessage = (fileUrl = null) => {
+    const message = {
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      user: {
+        id: this.state.user.uid,
+        name: this.state.user.displayName,
+        avatar: this.state.user.photoURL,
+      },
+    };
+    if (fileUrl !== null) {
+      message["image"] = fileUrl;
+    }
+    return message;
+  };
+
+  sendMessage = () => {
+    const { imagesRef } = this.state.imagesRef;
+    const { message, postId } = this.state;
+
+    if (message) {
+      this.setState({ loading: true });
+      imagesRef
+        .child(postId)
+        .push()
+        .set(this.createMessage())
+        .then(() => {
+          this.setState({ loading: false, message: "", errors: [] });
+        })
+        .catch((err) => {
+          console.error(err);
+          this.setState({
+            loading: false,
+            errors: this.state.errors.concat(err),
+          });
+        });
+    } else {
+      this.setState({
+        errors: this.state.errors.concat({ message: "Add a message" }),
+      });
+    }
+  };
+
+  getPath = () => {
+    return `bat/soup/${this.state.postId}`;
+  };
+
+  uploadFile = (file, metadata) => {
+    const pathToUpload = this.state.postId;
+    const ref = this.state.ticketsRef;
+    const filePath = `${this.getPath()}/${uuidv4()}.jpg`;
+
+    this.setState(
+      {
+        uploadState: "uploading",
+        uploadTask: this.state.storageRef.child(filePath).put(file, metadata),
+      },
+      () => {
+        this.state.uploadTask.on(
+          "state_changed",
+          (snap) => {
+            const percentUploaded = Math.round(
+              (snap.bytesTransferred / snap.totalBytes) * 100
+            );
+            this.setState({ percentUploaded });
+          },
+          (err) => {
+            console.error(err);
+            this.setState({
+              errors: this.state.errors.concat(err),
+              uploadState: "error",
+              uploadTask: null,
+            });
+          },
+          () => {
+            this.state.uploadTask.snapshot.ref
+              .getDownloadURL()
+              .then((downloadUrl) => {
+                this.sendFileMessage(downloadUrl, ref, pathToUpload);
+              })
+              .catch((err) => {
+                console.error(err);
+                this.setState({
+                  errors: this.state.errors.concat(err),
+                  uploadState: "error",
+                  uploadTask: null,
+                });
+              });
+          }
+        );
+      }
+    );
+  };
+
+  sendFileMessage = (fileUrl, ref, pathToUpload) => {
+    ref
+      .child(this.state.postId)
+      .child("images")
+      .push()
+      .set(this.createMessage(fileUrl))
+      .then(() => {
+        this.setState({ uploadState: "done" });
+      })
+      .catch((err) => {
+        console.error(err);
+        this.setState({
+          errors: this.state.errors.concat(err),
+        });
+      });
+  };
 
   getRandomColor() {
     let colors = ["primary", "success", "danger", "warning", "info", "dark"];
@@ -73,6 +190,7 @@ class Ticket extends React.Component {
         loadedTickets.push(snap.val());
       }
       this.setState({ tickets: loadedTickets, loading: false });
+      console.log(loadedTickets);
     });
   };
 
@@ -97,6 +215,7 @@ class Ticket extends React.Component {
       details: ticketDetails,
       subject: ticketSubject,
       category: value,
+      images: { t: "" },
       createdBy: {
         name: user.displayName,
         email: user.email,
@@ -138,6 +257,7 @@ class Ticket extends React.Component {
     tickets.length > 0 &&
     tickets.map((ticket) => (
       <div
+        key={ticket.id}
         className="col-md-auto col-lg-12"
         id="card-width-min"
         style={{ color: "white" }}
@@ -168,6 +288,12 @@ class Ticket extends React.Component {
             >
               Upload file
             </Button>
+
+            {Object.entries(ticket.images).map(([key, image]) => {
+              const imageKey = `image-${key}`;
+              return <FileLink file={image.image} key={imageKey} />;
+            })}
+
             <FileModal
               modal={this.state.modal}
               closeModal={this.closeModal}
