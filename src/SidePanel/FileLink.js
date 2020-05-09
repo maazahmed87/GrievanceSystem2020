@@ -2,20 +2,21 @@ import React from "react";
 
 class FileLink extends React.Component {
   render() {
-    const { file, key } = this.props;
+    const { fileName, fileRef, ikey } = this.props;
     console.log(this.props.file);
 
     return (
       <span>
-        {key !== "image-t" && (
+        {ikey !== "image-t" && (
           <p>
-            File link:{" "}
+            File Name: {"  "}
             <a
               target="_blank"
+              rel="noopener noreferrer"
               style={{ color: "white", textDecoration: "underline" }}
-              href={file}
+              href={fileRef}
             >
-              {file}
+              {fileName}
             </a>
           </p>
         )}
