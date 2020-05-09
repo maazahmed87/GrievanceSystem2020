@@ -5,13 +5,20 @@ import { Modal, Input, Button, Icon } from "semantic-ui-react";
 class FileModal extends React.Component {
   state = {
     file: null,
-    authorized: ["image/jpeg", "image/png"],
+    authorized: [
+      "image/jpeg",
+      "image/png",
+      "application/msword",
+      "	application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/pdf",
+    ],
   };
 
   addFile = (event) => {
     const file = event.target.files[0];
     if (file) {
       this.setState({ file });
+      console.log(file);
     }
   };
 
@@ -44,7 +51,7 @@ class FileModal extends React.Component {
           <Input
             onChange={this.addFile}
             fluid
-            label="File types: jpg, png"
+            label="File types: jpg, png, doc, docx, pdf"
             name="file"
             type="file"
           />
