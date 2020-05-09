@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
-import Accordion from "react-bootstrap/Accordion";
+
 import FileLink from "./FileLink";
 import {
   Menu,
@@ -64,7 +64,13 @@ class Ticket extends React.Component {
     this.getRandomColor();
   }
 
-  createMessage = (fileUrl = null) => {
+  componentWillUnmount() {
+    if (this.state.uploadTask !== null) {
+      this.state.uploadTask.cancel();
+      this.setState({ uploadTask: null });
+    }
+  }
+  createMessage = (fileUrl = null, name) => {
     const message = {
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       user: {
@@ -74,7 +80,8 @@ class Ticket extends React.Component {
       },
     };
     if (fileUrl !== null) {
-      message["image"] = fileUrl;
+      message["url"] = fileUrl;
+      message["filename"] = name;
     }
     return message;
   };
@@ -141,7 +148,7 @@ class Ticket extends React.Component {
             this.state.uploadTask.snapshot.ref
               .getDownloadURL()
               .then((downloadUrl) => {
-                this.sendFileMessage(downloadUrl, ref, pathToUpload);
+                this.sendFileMessage(downloadUrl, ref, pathToUpload, file);
               })
               .catch((err) => {
                 console.error(err);
@@ -157,14 +164,15 @@ class Ticket extends React.Component {
     );
   };
 
-  sendFileMessage = (fileUrl, ref, pathToUpload) => {
+  sendFileMessage = (fileUrl, ref, pathToUpload, file) => {
     ref
       .child(this.state.postId)
       .child("images")
       .push()
-      .set(this.createMessage(fileUrl))
+      .set(this.createMessage(fileUrl, file.name))
       .then(() => {
         this.setState({ uploadState: "done" });
+        this.addListeners();
       })
       .catch((err) => {
         console.error(err);
@@ -267,12 +275,12 @@ class Ticket extends React.Component {
           key={ticket.id}
           bg={this.getRandomColor()}
         >
+          <Card.Header id="font-size-card">{ticket.name}</Card.Header>
           <Card.Body>
-            <Card.Title id="font-size-card">{ticket.name}</Card.Title>
-            <Card.Subtitle className="mb-2 ">
+            <Card.Title className="">
               <strong>Subject: </strong>
               {ticket.subject}
-            </Card.Subtitle>
+            </Card.Title>
             <Card.Subtitle className="mb-2 ">
               <strong>Category: </strong>
               {ticket.category}
@@ -288,11 +296,19 @@ class Ticket extends React.Component {
             >
               Upload file
             </Button>
-
-            {Object.entries(ticket.images).map(([key, image]) => {
-              const imageKey = `image-${key}`;
-              return <FileLink file={image.image} key={imageKey} />;
-            })}
+            <Card.Text>
+              {Object.entries(ticket.images).map(([key, image]) => {
+                const imageKey = `image-${key}`;
+                return (
+                  <FileLink
+                    fileRef={image.url}
+                    fileName={image.filename}
+                    key={imageKey}
+                    ikey={imageKey}
+                  />
+                );
+              })}
+            </Card.Text>
 
             <FileModal
               modal={this.state.modal}
@@ -329,11 +345,13 @@ class Ticket extends React.Component {
 
     return (
       <Container className="white-back">
-        <h2>Tickets</h2>
+        <center>
+          <h2>Tickets</h2>
+        </center>
         <Menu.Menu style={{ paddingBottom: "2em" }}>
           <Menu.Item>
             <span>
-              <Icon name="exchange" /> Create a Ticket
+              <Icon name="write" /> Create a Ticket
             </span>{" "}
             <Icon name="add" onClick={this.openModalT} />
           </Menu.Item>
@@ -373,7 +391,7 @@ class Ticket extends React.Component {
                 <TextArea
                   name="ticketDetails"
                   placeholder="Tell us more"
-                  style={{ minHeight: 100, maxHeight: 320 }}
+                  style={{ minHeight: 200, maxHeight: 320 }}
                   onChange={this.handleChange}
                 />
               </Form.Field>
@@ -389,6 +407,7 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
+
         <div className="row justify-content-lg-center">
           {loading ? (
             <Spinner />
