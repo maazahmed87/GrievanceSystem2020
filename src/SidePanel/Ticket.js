@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import FileLink from "./FileLink";
 import {
@@ -39,6 +41,7 @@ class Ticket extends React.Component {
     storageRef: firebase.storage().ref(),
     imagesRef: firebase.database().ref("images"),
     modalT: false,
+    modalD: false,
     modal: false,
     value: "",
     colorValues: [
@@ -57,6 +60,7 @@ class Ticket extends React.Component {
     percentUploaded: 0,
     message: "",
     errors: [],
+    deleteId: "",
   };
 
   componentDidMount() {
@@ -255,6 +259,14 @@ class Ticket extends React.Component {
     }
   };
 
+  handleDelete = () => {
+    let ticket_id = this.state.deleteId;
+    let ref = this.state.ticketsRef;
+    ref.child(ticket_id).remove();
+    this.closeModalD();
+    this.addListeners();
+  };
+
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -275,7 +287,27 @@ class Ticket extends React.Component {
           key={ticket.id}
           bg={this.getRandomColor()}
         >
-          <Card.Header id="font-size-card">{ticket.name}</Card.Header>
+          <Card.Header id="font-size-card">
+            {ticket.name}
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="Delete ticket"
+              onClick={() => {
+                this.setState({ modalD: true, deleteId: ticket.id });
+              }}
+              style={{
+                float: "right",
+                outline: "none",
+                background: "transparent",
+                border: "none",
+              }}
+            >
+              <Icon name="trash" />
+            </button>
+          </Card.Header>
           <Card.Body>
             <Card.Title className="">
               <strong>Subject: </strong>
@@ -336,12 +368,16 @@ class Ticket extends React.Component {
 
   closeModalT = () => this.setState({ modalT: false });
 
+  openModalD = () => this.setState({ modalD: true });
+
+  closeModalD = () => this.setState({ modalD: false });
+
   openModal = () => this.setState({ modal: true });
 
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { tickets, modalT, value, loading } = this.state;
+    const { tickets, modalT, modalD, value, loading } = this.state;
 
     return (
       <Container className="white-back">
@@ -403,6 +439,19 @@ class Ticket extends React.Component {
               <Icon name="checkmark" /> Submit
             </Button>
             <Button color="red" inverted onClick={this.closeModalT}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
+
+        <Modal basic open={modalD} onClose={this.closeModalD}>
+          <Modal.Header>Delete Ticket? </Modal.Header>
+
+          <Modal.Actions>
+            <Button color="green" inverted onClick={this.handleDelete}>
+              <Icon name="checkmark" /> Delete
+            </Button>
+            <Button color="red" inverted onClick={this.closeModalD}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
