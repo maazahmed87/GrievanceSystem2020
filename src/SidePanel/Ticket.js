@@ -13,10 +13,12 @@ import {
   Icon,
   Modal,
   Form,
+  Label,
   Input,
   Button,
   Dropdown,
   TextArea,
+  Header,
 } from "semantic-ui-react";
 import Spinner from "../Spinner";
 import FileModal from "./FileModal";
@@ -61,11 +63,13 @@ class Ticket extends React.Component {
     message: "",
     errors: [],
     deleteId: "",
+    searchTerm: "",
+    searchLoading: false,
+    searchResults: [],
   };
 
   componentDidMount() {
     this.addListeners();
-    this.getRandomColor();
   }
 
   componentWillUnmount() {
@@ -88,6 +92,37 @@ class Ticket extends React.Component {
       message["filename"] = name;
     }
     return message;
+  };
+
+  handleSearchChange = (event) => {
+    this.setState(
+      {
+        searchTerm: event.target.value,
+        searchLoading: true,
+      },
+      () => this.handleSearchTickets()
+    );
+  };
+
+  handleSearchTickets = () => {
+    const filterTickets = [...this.state.tickets];
+    const regex = new RegExp(this.state.searchTerm, "gi");
+    const searchResults = filterTickets.reduce((acc, ticket) => {
+      if (
+        ticket.createdBy.email.match(regex) ||
+        ticket.status.match(regex) ||
+        ticket.category.match(regex) ||
+        ticket.name.match(regex) ||
+        ticket.createdBy.name.match(regex) ||
+        ticket.subject.match(regex) ||
+        ticket.details.match(regex)
+      ) {
+        acc.push(ticket);
+      }
+      return acc;
+    }, []);
+    this.setState({ searchResults });
+    setTimeout(() => this.setState({ searchLoading: false }), 1000);
   };
 
   sendMessage = () => {
@@ -202,7 +237,7 @@ class Ticket extends React.Component {
         loadedTickets.push(snap.val());
       }
       this.setState({ tickets: loadedTickets, loading: false });
-      console.log(loadedTickets);
+      this.getRandomColor();
     });
   };
 
@@ -319,7 +354,9 @@ class Ticket extends React.Component {
             </Card.Subtitle>
             <Card.Subtitle className="mb-2 ">
               <strong>Status: </strong>
-              {ticket.status}
+              <Label size="small" color="black" basic>
+                {ticket.status}
+              </Label>
             </Card.Subtitle>
             <Card.Text>{ticket.details}</Card.Text>
             <Button
@@ -377,13 +414,32 @@ class Ticket extends React.Component {
   closeModal = () => this.setState({ modal: false });
 
   render() {
-    const { tickets, modalT, modalD, value, loading } = this.state;
+    const {
+      tickets,
+      modalT,
+      modalD,
+      value,
+      loading,
+      searchLoading,
+      searchResults,
+      searchTerm,
+    } = this.state;
 
     return (
       <Container className="white-back">
         <center>
           <h2>Tickets</h2>
         </center>
+        <Header floated="right">
+          <Input
+            loading={searchLoading}
+            onChange={this.handleSearchChange}
+            size="mini"
+            icon="search"
+            name="searchTerm"
+            placeholder="Search Tickets"
+          />
+        </Header>
         <Menu.Menu style={{ paddingBottom: "2em" }}>
           <Menu.Item>
             <span>
@@ -448,10 +504,10 @@ class Ticket extends React.Component {
           <Modal.Header>Delete Ticket? </Modal.Header>
 
           <Modal.Actions>
-            <Button color="green" inverted onClick={this.handleDelete}>
-              <Icon name="checkmark" /> Delete
+            <Button color="red" inverted onClick={this.handleDelete}>
+              <Icon name="trash" /> Delete
             </Button>
-            <Button color="red" inverted onClick={this.closeModalD}>
+            <Button color="green" inverted onClick={this.closeModalD}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
@@ -461,7 +517,11 @@ class Ticket extends React.Component {
           {loading ? (
             <Spinner />
           ) : (
-            <Fragment>{this.displayTickets(tickets)}</Fragment>
+            <Fragment>
+              {searchTerm
+                ? this.displayTickets(searchResults)
+                : this.displayTickets(tickets)}
+            </Fragment>
           )}
         </div>
       </Container>
