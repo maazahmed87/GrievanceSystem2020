@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import Landing from "./components/Landing";
 import Spinner from "./Spinner";
 import registerServiceWorker from "./registerServiceWorker";
 import firebase from "./firebase";
@@ -30,9 +31,9 @@ class Root extends React.Component {
       if (user) {
         // console.log(user);
         this.props.setUser(user);
-        this.props.history.push("/");
+        this.props.history.push("/dashboard");
       } else {
-        this.props.history.push("/login");
+        this.props.history.push("/");
         this.props.clearUser();
       }
     });
@@ -43,7 +44,8 @@ class Root extends React.Component {
       <Spinner />
     ) : (
       <Switch>
-        <Route exact path="/" component={App} />
+        <Route exact path="/" component={Landing} />
+        <Route exact path="/dashboard" component={App} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
       </Switch>

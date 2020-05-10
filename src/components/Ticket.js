@@ -23,6 +23,7 @@ import {
 import Spinner from "../Spinner";
 import FileModal from "./FileModal";
 import ProgressBar from "./ProgressBar";
+import "./App.css";
 
 const options = [
   { key: 1, text: "Category 1", value: "category 1" },
