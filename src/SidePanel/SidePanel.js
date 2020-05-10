@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import UserPanel from "./UserPanel";
 import Ticket from "./Ticket";
-import { Menu, GridColumn, Grid, Row } from "semantic-ui-react";
+import { Menu, Grid } from "semantic-ui-react";
 
 class SidePanel extends React.Component {
   render() {

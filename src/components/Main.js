@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import firebase from "../firebase";
-import Ticket from "../SidePanel/Ticket";
+import Ticket from "./Ticket";
+import Account from "./Account";
 import $ from "jquery";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -10,7 +11,7 @@ import { Icon } from "semantic-ui-react";
 
 class Main extends React.Component {
   state = {
-    active: "tickets",
+    active: "account",
   };
   handleSignout = () => {
     firebase
@@ -113,7 +114,7 @@ class Main extends React.Component {
           </nav>
 
           <div className="container-fluid">
-            {active === "account" && <h2>Account Section</h2>}
+            {active === "account" && <Account currentUser={currentUser} />}
             {active === "tickets" && <Ticket currentUser={currentUser} />}
           </div>
         </div>

@@ -8,7 +8,6 @@ import {
   Button,
   Header,
   Message,
-  Icon,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
@@ -16,6 +15,7 @@ class Register extends React.Component {
   state = {
     username: "",
     email: "",
+    usn: "",
     password: "",
     passwordConfirmation: "",
     errors: [],
@@ -40,10 +40,11 @@ class Register extends React.Component {
     }
   };
 
-  isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
+  isFormEmpty = ({ username, email, usn, password, passwordConfirmation }) => {
     return (
       !username.length ||
       !email.length ||
+      !usn.length ||
       !password.length ||
       !passwordConfirmation.length
     );
@@ -78,6 +79,8 @@ class Register extends React.Component {
           createdUser.user
             .updateProfile({
               displayName: this.state.username,
+              tenantId: this.state.usn,
+              email: this.state.email,
               photoURL: `http://gravatar.com/avatar/${md5(
                 createdUser.user.email
               )}?d=identicon`,
@@ -106,9 +109,12 @@ class Register extends React.Component {
   };
 
   saveUser = (createdUser) => {
+    let u = this.state.usn;
     return this.state.usersRef.child(createdUser.user.uid).set({
       name: createdUser.user.displayName,
       avatar: createdUser.user.photoURL,
+      usn: u,
+      email: createdUser.user.email,
     });
   };
 
@@ -124,6 +130,7 @@ class Register extends React.Component {
     const {
       username,
       email,
+      usn,
       password,
       passwordConfirmation,
       errors,
@@ -159,6 +166,18 @@ class Register extends React.Component {
                 value={email}
                 className={this.handleInputError(errors, "email")}
                 type="email"
+              />
+
+              <Form.Input
+                fluid
+                name="usn"
+                icon="mail"
+                iconPosition="left"
+                placeholder="University Serial Number"
+                onChange={this.handleChange}
+                value={usn}
+                className={this.handleInputError(errors, "usn")}
+                type="text"
               />
 
               <Form.Input

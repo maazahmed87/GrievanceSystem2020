@@ -326,7 +326,7 @@ class Ticket extends React.Component {
             {ticket.name}
             <button
               type="button"
-              class="btn btn-secondary"
+              className="btn btn-secondary"
               data-toggle="tooltip"
               data-placement="top"
               title="Delete ticket"

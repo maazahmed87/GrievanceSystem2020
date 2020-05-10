@@ -7,9 +7,6 @@ import Main from "./Main";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = ({ currentUser }) => {
-  const user = currentUser;
-  console.log(user);
-
   return <Main currentUser={currentUser} />;
 };
 
