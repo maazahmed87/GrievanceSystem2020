@@ -358,7 +358,7 @@ class Ticket extends React.Component {
                 {ticket.status}
               </Label>
             </Card.Subtitle>
-            <Card.Text>{ticket.details}</Card.Text>
+            <Card.Text style={{ color: "white" }}>{ticket.details}</Card.Text>
             <Button
               compact
               inverted

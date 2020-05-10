@@ -8,7 +8,7 @@ class FileLink extends React.Component {
     return (
       <span>
         {ikey !== "image-t" && (
-          <p>
+          <p style={{ color: "white" }}>
             File Name: {"  "}
             <a
               target="_blank"

@@ -3,15 +3,15 @@ import React from "react";
 import firebase from "../firebase";
 import Ticket from "./Ticket";
 import Account from "./Account";
+import Chat from "./Chat";
 import $ from "jquery";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-
 import { Icon } from "semantic-ui-react";
 
 class Main extends React.Component {
   state = {
-    active: "account",
+    active: "tickets",
   };
   handleSignout = () => {
     firebase
@@ -35,7 +35,10 @@ class Main extends React.Component {
         <div className="bg-light border-right" id="sidebar-wrapper">
           <div className="sidebar-heading">Grivance System </div>
           <div className="list-group list-group-flush">
-            <a className="list-group-item list-group-item-action bg-light">
+            <a
+              className="list-group-item list-group-item-action bg-light"
+              onClick={() => this.setState({ active: "dashboard" })}
+            >
               Dashboard
             </a>
             <a
@@ -43,6 +46,12 @@ class Main extends React.Component {
               onClick={() => this.setState({ active: "tickets" })}
             >
               Tickets
+            </a>
+            <a
+              className="list-group-item list-group-item-action bg-light"
+              onClick={() => this.setState({ active: "chat" })}
+            >
+              Chat
             </a>
             <a
               className="list-group-item list-group-item-action bg-light"
@@ -114,8 +123,10 @@ class Main extends React.Component {
           </nav>
 
           <div className="container-fluid">
+            {active === "dashboard" && <h1>Dashboard</h1>}
             {active === "account" && <Account currentUser={currentUser} />}
             {active === "tickets" && <Ticket currentUser={currentUser} />}
+            {active === "chat" && <Chat />}
           </div>
         </div>
       </div>

@@ -1,0 +1,196 @@
+.wrapper {
+  margin: 20px auto;
+}
+
+@media all and (max-width: 500px) {
+  .no-mobile {
+    display: none;
+  }
+}
+
+@media all and (min-width: 500px) {
+  .wrapper {
+    padding: 0 20px;
+    background-color: #e1e1e1;
+    padding-top: 20px;
+    border-radius: 5px;
+  }
+
+  .roww {
+    display: flex;
+  }
+
+  .coll-1 {
+    flex: 1;
+  }
+  .coll-2 {
+    flex: 2;
+  }
+  .coll-3 {
+    flex: 3;
+  }
+  .coll-4 {
+    flex: 4;
+  }
+  .coll-5 {
+    flex: 5;
+  }
+  .coll-6 {
+    flex: 6;
+  }
+  .coll-7 {
+    flex: 7;
+  }
+  .coll-8 {
+    flex: 8;
+  }
+  .coll-9 {
+    flex: 9;
+  }
+  .coll-10 {
+    flex: 10;
+  }
+  .coll-11 {
+    flex: 11;
+  }
+  .coll-12 {
+    flex: 12;
+  }
+}
+@media all and (min-width: 1000px) {
+  .wrapper {
+    max-width: 1000px;
+  }
+}
+
+h2 {
+  font: 600 20px/1 "Open Sans", sans-serif;
+  color: #888;
+  margin: 20px 0;
+}
+
+h3 {
+  font: 600 15px/1 "Open Sans", sans-serif;
+  color: #999;
+  margin: 20px 0;
+}
+
+p {
+  font: 12px/1 "Open Sans", sans-serif;
+  color: #777;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Just so you can get an impression of what it looks like when the height changes without spamming the code with useless text. */
+.blank-col {
+  min-height: 150px;
+  max-height: 150px;
+}
+
+.sticky {
+  font: 600 20px/1 "Open Sans", sans-serif;
+  top: 0;
+  position: fixed;
+  width: 100%;
+  max-height: 150px;
+}
+
+.no-back {
+  background-color: #f1f1f1; /* make sure to change this to the background color */
+}
+
+.warn {
+  background: #ffdb4d;
+}
+.note {
+  background: #5cadff;
+  color: #fff;
+}
+.error {
+  background: #ff5353;
+  color: #fff;
+}
+.correct {
+  background: #33d685;
+  color: #fff;
+}
+.rounded {
+  border-radius: 100px;
+}
+
+.top-r {
+  border-top-right-radius: 100px;
+}
+.top-l {
+  border-top-left-radius: 100px;
+}
+.bottom-r {
+  border-bottom-right-radius: 100px;
+}
+.bottom-l {
+  border-bottom-left-radius: 100px;
+}
+
+.rad-l {
+  border-radius: 100px 0 0 100px;
+}
+.rad-r {
+  border-radius: 0 100px 100px 0;
+}
+
+.hidden-col {
+  visibility: hidden;
+}
+
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+.back-img {
+  /* Use on columns only! */
+  background-image: url(http://xendox.com/assets/img/header_bg.jpg);
+  height: 150px;
+  background-size: cover;
+  color: #fff; /*change this to the best color with your background */
+}
+
+/*
+===============
+Contributions
+===============
+*/
+/* by BCasal.es */
+.full-width {
+  margin-bottom: 0;
+}
+
+.full-width:last-child {
+  margin-bottom: 20px;
+}
+
+.space-off,
+.space-off:last-child {
+  margin-bottom: 0;
+}
+
+@media all and (min-width: 500px) {
+  .full-width {
+    margin-bottom: 20px;
+    margin-right: 0;
+  }
+
+  .space-off,
+  .space-off:last-child {
+    margin-bottom: 0;
+  }
+}
