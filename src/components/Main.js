@@ -8,7 +8,7 @@ import $ from "jquery";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Icon } from "semantic-ui-react";
-
+import Dashboard from "./dashboard";
 class Main extends React.Component {
   state = {
     active: "tickets",
@@ -123,7 +123,7 @@ class Main extends React.Component {
           </nav>
 
           <div className="container-fluid">
-            {active === "dashboard" && <h1>Dashboard</h1>}
+            {active === "dashboard" && <Dashboard currentUser={currentUser} />}
             {active === "account" && <Account currentUser={currentUser} />}
             {active === "tickets" && <Ticket currentUser={currentUser} />}
             {active === "chat" && <Chat />}
