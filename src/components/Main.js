@@ -8,7 +8,7 @@ import $ from "jquery";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Icon } from "semantic-ui-react";
-import Dashboard from "./dashboard";
+import Dashboard from "./Dashboard";
 class Main extends React.Component {
   state = {
     active: "tickets",

@@ -2,18 +2,7 @@ import React, { Fragment } from "react";
 import firebase from "../firebase";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
-import {
-  Menu,
-  Icon,
-  Modal,
-  Form,
-  Label,
-  Input,
-  Button,
-  Dropdown,
-  TextArea,
-  Header,
-} from "semantic-ui-react";
+import { Menu, Icon, Header } from "semantic-ui-react";
 import Spinner from "../Spinner";
 import "./App.css";
 
@@ -183,6 +172,7 @@ class Dashboard extends React.Component {
       cat2Tickets,
       cat3Tickets,
       pendingCount,
+      loading,
     } = this.state;
 
     return (
@@ -199,15 +189,19 @@ class Dashboard extends React.Component {
           </Menu.Item>
         </Menu.Menu>
         <div className="row justify-content-lg-center">
-          <Fragment>
-            {this.displayTickets(
-              tickets,
-              cat1Tickets,
-              cat2Tickets,
-              cat3Tickets,
-              pendingCount
-            )}
-          </Fragment>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <Fragment>
+              {this.displayTickets(
+                tickets,
+                cat1Tickets,
+                cat2Tickets,
+                cat3Tickets,
+                pendingCount
+              )}
+            </Fragment>
+          )}
         </div>
         <div>
           <Fragment>{this.displayUserDetails(userDetails)}</Fragment>

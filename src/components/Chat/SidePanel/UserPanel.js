@@ -38,21 +38,8 @@ class UserPanel extends React.Component {
 
   dropdownOptions = () => [
     {
-      key: "user",
-      text: (
-        <span>
-          Signed in as <strong>{this.state.user.displayName}</strong>
-        </span>
-      ),
-      disabled: true,
-    },
-    {
       key: "avatar",
       text: <span onClick={this.openModal}>Change Avatar</span>,
-    },
-    {
-      key: "signout",
-      text: <span onClick={this.handleSignout}>Sign Out</span>,
     },
   ];
 
