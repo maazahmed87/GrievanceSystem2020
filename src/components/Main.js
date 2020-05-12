@@ -11,7 +11,7 @@ import { Icon } from "semantic-ui-react";
 import Dashboard from "./Dashboard";
 class Main extends React.Component {
   state = {
-    active: "tickets",
+    active: "dashboard",
   };
   handleSignout = () => {
     firebase

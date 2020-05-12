@@ -2,8 +2,10 @@ import React, { Fragment } from "react";
 import firebase from "../firebase";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
-import { Menu, Icon, Header } from "semantic-ui-react";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Spinner from "../Spinner";
+import { Pie, Doughnut } from "react-chartjs-2";
 import "./App.css";
 
 class Dashboard extends React.Component {
@@ -14,6 +16,7 @@ class Dashboard extends React.Component {
     cat2Tickets: [],
     cat3Tickets: [],
     pendingCount: 0,
+    closedCount: 0,
     userDetails: [],
     loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
@@ -32,6 +35,34 @@ class Dashboard extends React.Component {
     postId: "",
     message: "",
     errors: [],
+    chart1: {
+      labels: ["Category1", "Category 2", "Category 3"],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+        },
+      ],
+      title: "Tickets category chart",
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    },
+    chart2: {
+      labels: ["Pending", "Closed"],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: ["#FFC154", "#47B39C"],
+        },
+      ],
+      title: "Status Pie Chart",
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    },
   };
 
   componentDidMount() {
@@ -51,6 +82,9 @@ class Dashboard extends React.Component {
     let loadedCat2Tickets = [];
     let loadedCat3Tickets = [];
     let loadedPendingCount = 0;
+    let c1 = 0;
+    let c2 = 0;
+    let c3 = 0;
     this.setState({ loading: true });
     let user = this.state.user;
     this.state.ticketsRef.on("child_added", (snap) => {
@@ -58,19 +92,42 @@ class Dashboard extends React.Component {
         loadedTickets.push(snap.val());
         if ("category 1" === snap.val().category) {
           loadedCat1Tickets.push(snap.val());
+          c1++;
         }
         if ("category 2" === snap.val().category) {
           loadedCat2Tickets.push(snap.val());
+          c2++;
         }
         if ("category 3" === snap.val().category) {
           loadedCat3Tickets.push(snap.val());
+          c3 = c3 + 1;
         }
         if ("pending" === snap.val().status) {
           loadedPendingCount++;
         }
       }
+      let completedCount = loadedTickets.length - loadedPendingCount;
+      console.log(completedCount);
+
+      let countArray = [c1, c2, c3];
+      let statusArray = [loadedPendingCount, completedCount];
+
+      let categoryDataset = this.state.chart1.datasets.slice(0);
+      categoryDataset[0].data = countArray;
+
+      let statusDataset = this.state.chart2.datasets.slice(0);
+      statusDataset[0].data = statusArray;
+
+      this.setState({
+        chart: Object.assign({}, this.state.data, {
+          datasets: categoryDataset,
+          statusDataset,
+        }),
+      });
+
       this.setState({
         tickets: loadedTickets,
+        closedCount: completedCount,
         cat1Tickets: loadedCat1Tickets,
         cat2Tickets: loadedCat2Tickets,
         cat3Tickets: loadedCat3Tickets,
@@ -87,125 +144,122 @@ class Dashboard extends React.Component {
     });
   };
 
-  displayTickets = (
-    tickets,
-    cat1Tickets,
-    cat2Tickets,
-    cat3Tickets,
-    pendingCount
-  ) => (
-    <div
-      className="col-md-auto col-lg-12"
-      id="card-width-min"
-      style={{ color: "white" }}
-    >
-      <Card
-        style={{ minWidth: "18rem", margin: "10px" }}
-        bg={this.getRandomColor()}
-      >
-        <Card.Header id="font-size-card">Ticket Analysis</Card.Header>
-        <Card.Body>
-          <Card.Title className="">
-            <strong>Number of tickets submitted : </strong>
-            {tickets.length}
-          </Card.Title>
-          <Card.Subtitle className="mb-2 ">
-            <strong>Category 1 tickets: </strong>
-            {cat1Tickets.length}
-          </Card.Subtitle>
-          <Card.Subtitle className="mb-2 ">
-            <strong>Category 2 tickets: </strong>
-            {cat2Tickets.length}
-          </Card.Subtitle>
-          <Card.Subtitle className="mb-2 ">
-            <strong>Category 3 tickets: </strong>
-            {cat3Tickets.length}
-          </Card.Subtitle>
-          <Card.Subtitle className="mb-2 ">
-            <strong>Pending tickets: </strong>
-            {pendingCount}
-          </Card.Subtitle>
-        </Card.Body>
-        <Card.Footer>
-          <small className="text-muted" id="whiteColor"></small>
-        </Card.Footer>
-      </Card>
-    </div>
-  );
-
-  displayUserDetails = (userDetails) =>
-    userDetails.map((user) => (
-      <div
-        key={user.id}
-        className="col-md-auto col-lg-12"
-        id="card-width-min"
-        style={{ color: "white" }}
-      >
-        <Card
-          style={{ minWidth: "18rem", margin: "10px" }}
-          key={user.id}
-          bg={this.getRandomColor()}
-        >
-          <Card.Header id="font-size-card">{user.name}</Card.Header>
-          <Card.Body>
-            <Card.Title className="">
-              <strong>email: </strong>
-              {user.email}
-            </Card.Title>
-            <Card.Subtitle className="mb-2 ">
-              <strong>USN: </strong>
-              {user.usn}
-            </Card.Subtitle>
-          </Card.Body>
-          <Card.Footer>
-            <small className="text-muted" id="whiteColor"></small>
-          </Card.Footer>
-        </Card>
-      </div>
-    ));
-
   render() {
     const {
       tickets,
-      userDetails,
-      cat1Tickets,
-      cat2Tickets,
-      cat3Tickets,
       pendingCount,
       loading,
+      closedCount,
+      chart1,
+      chart2,
     } = this.state;
 
     return (
-      <Container className="white-back">
+      <Container className="white-back" fluid>
         <center>
-          <h2>Dashboard</h2>
+          <h2 style={{ color: "black", margin: "10px 0px" }}>Dashboard</h2>
         </center>
-        <Header floated="right"></Header>
-        <Menu.Menu style={{ paddingBottom: "2em" }}>
-          <Menu.Item>
-            <span>
-              <Icon name="" /> Welcome
-            </span>{" "}
-          </Menu.Item>
-        </Menu.Menu>
-        <div className="row justify-content-lg-center">
-          {loading ? (
-            <Spinner />
-          ) : (
-            <Fragment>
-              {this.displayTickets(
-                tickets,
-                cat1Tickets,
-                cat2Tickets,
-                cat3Tickets,
-                pendingCount
-              )}
-            </Fragment>
-          )}
-        </div>
-        <div>
-          <Fragment>{this.displayUserDetails(userDetails)}</Fragment>
-        </div>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <Fragment>
+            <Row>
+              <Col
+                sm={4}
+                style={{
+                  height: "25vh",
+                }}
+              >
+                <Card
+                  style={{
+                    width: "auto",
+                    height: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  <Card.Header as="h5">Total Tickets</Card.Header>
+                  <Card.Body>
+                    <div style={{ fontSize: "62px", marginTop: "10%" }}>
+                      {tickets.length}
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col
+                sm={4}
+                style={{
+                  height: "25vh",
+                }}
+              >
+                <Card
+                  style={{
+                    width: "auto",
+                    height: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  <Card.Header as="h5">Pending Tickets</Card.Header>
+                  <Card.Body>
+                    <div style={{ fontSize: "62px", marginTop: "10%" }}>
+                      {pendingCount}
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col
+                sm={4}
+                style={{
+                  height: "25vh",
+                }}
+              >
+                <Card
+                  style={{
+                    width: "auto",
+                    height: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  <Card.Header as="h5">Completed Tickets</Card.Header>
+                  <Card.Body>
+                    <div style={{ fontSize: "62px", marginTop: "10%" }}>
+                      {closedCount}
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+            <Row style={{ margin: "20px 0px" }}>
+              <Col
+                sm={6}
+                style={{
+                  textAlign: "center",
+                  border: "1px solid #dfdfdf",
+                  borderCollapse: "collapse",
+                }}
+              >
+                <h2 style={{ color: "black" }}>
+                  Category wise ticket Distribution
+                </h2>
+                <Pie data={chart1} />
+              </Col>
+
+              <Col
+                sm={6}
+                style={{
+                  textAlign: "center",
+                  paddingBottom: "15px",
+                  border: "1px solid #dfdfdf",
+                  borderCollapse: "collapse",
+                }}
+              >
+                <h2 style={{ color: "black" }}>
+                  Status wise ticket Distribution
+                </h2>
+                <Doughnut data={chart2} />
+              </Col>
+            </Row>
+          </Fragment>
+        )}
       </Container>
     );
   }
