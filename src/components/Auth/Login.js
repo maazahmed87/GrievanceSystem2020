@@ -61,7 +61,7 @@ class Login extends React.Component {
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h1" icon color="orange" textAlign="center">
+          <Header as="h1" icon color="blue" textAlign="center">
             Login
           </Header>
           <Form onSubmit={this.handleSubmit} size="large">
@@ -93,7 +93,7 @@ class Login extends React.Component {
               <Button
                 disabled={loading}
                 className={loading ? "loading" : ""}
-                color="orange"
+                color="blue"
                 fluid
                 size="large"
               >

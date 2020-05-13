@@ -11,7 +11,7 @@ import { Icon } from "semantic-ui-react";
 import Dashboard from "./Dashboard";
 class Main extends React.Component {
   state = {
-    active: "dashboard",
+    active: "tickets",
   };
   handleSignout = () => {
     firebase
@@ -26,36 +26,63 @@ class Main extends React.Component {
     });
   }
 
+  scrollStep() {
+    if (window.pageYOffset === 0) {
+      clearInterval(this.state.intervalId);
+    }
+    window.scroll(0, window.pageYOffset - this.props.scrollStepInPx);
+  }
+
+  scrollToTop() {
+    let intervalId = setInterval(
+      this.scrollStep.bind(this),
+      this.props.delayInMs
+    );
+    this.setState({ intervalId: intervalId });
+  }
+
   render() {
     const { currentUser } = this.props;
     const { active } = this.state;
 
     return (
       <div className="d-flex" id="wrapper">
-        <div className="bg-light border-right" id="sidebar-wrapper">
-          <div className="sidebar-heading">Grivance System </div>
+        <div
+          className=" border-right"
+          id="sidebar-wrapper"
+          style={{ background: "#253544" }}
+        >
+          <div className="sidebar-heading">Grievance System </div>
           <div className="list-group list-group-flush">
             <a
-              className="list-group-item list-group-item-action bg-light"
+              className="list-group-item list-group-item-action"
+              style={{ background: "#253544", cursor: "pointer" }}
+              id={active === "dashboard" ? "selected" : ""}
               onClick={() => this.setState({ active: "dashboard" })}
             >
               Dashboard
             </a>
             <a
-              className="list-group-item list-group-item-action bg-light"
+              className="list-group-item list-group-item-action"
+              style={{ background: "#253544", cursor: "pointer" }}
+              id={active === "tickets" ? "selected" : ""}
               onClick={() => this.setState({ active: "tickets" })}
             >
               Tickets
             </a>
             <a
-              className="list-group-item list-group-item-action bg-light"
+              id={active === "chat" ? "selected" : ""}
+              className="list-group-item list-group-item-action "
+              style={{ background: "#253544", cursor: "pointer" }}
               onClick={() => this.setState({ active: "chat" })}
             >
               Chat
             </a>
             <a
-              className="list-group-item list-group-item-action bg-light"
+              className="list-group-item list-group-item-action"
+              style={{ background: "#253544", cursor: "pointer" }}
               onClick={() => this.setState({ active: "account" })}
+              id={active === "account" ? "selected" : ""}
             >
               Account
             </a>
@@ -64,7 +91,7 @@ class Main extends React.Component {
 
         <div id="page-content-wrapper">
           <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <button className="btn" id="menu-toggle">
+            <button className="btn out-but" id="menu-toggle">
               <Icon name="sidebar" />
             </button>
 
@@ -127,6 +154,15 @@ class Main extends React.Component {
             {active === "account" && <Account currentUser={currentUser} />}
             {active === "tickets" && <Ticket currentUser={currentUser} />}
             {active === "chat" && <Chat />}
+            <button
+              title="Back to top"
+              className="scroll"
+              onClick={() => {
+                this.scrollToTop();
+              }}
+            >
+              <Icon name="arrow up" />
+            </button>
           </div>
         </div>
       </div>

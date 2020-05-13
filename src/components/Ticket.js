@@ -9,7 +9,6 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import FileLink from "./FileLink";
 import {
-  Menu,
   Icon,
   Modal,
   Form,
@@ -345,21 +344,33 @@ class Ticket extends React.Component {
             </button>
           </Card.Header>
           <Card.Body>
-            <Card.Title className="">
+            <Card.Title id="font-size-sub">
               <strong>Subject: </strong>
               {ticket.subject}
             </Card.Title>
-            <Card.Subtitle className="mb-2 ">
+            <Card.Title id="font-size-sub ">
               <strong>Category: </strong>
               {ticket.category}
-            </Card.Subtitle>
-            <Card.Subtitle className="mb-2 ">
-              <strong>Status: </strong>
+            </Card.Title>
+            <Card.Subtitle className="mb-2">
+              <strong style={{ fontSize: "18px" }}>Status: </strong>
               <Label size="small" color="black" basic>
-                {ticket.status}
+                <span style={{ textTransform: "capitalize" }}>
+                  {ticket.status}
+                </span>
               </Label>
             </Card.Subtitle>
-            <Card.Text style={{ color: "white" }}>{ticket.details}</Card.Text>
+            <Card.Text
+              style={{
+                fontSize: "14px",
+                color: "black",
+                background: "white",
+                padding: "8px",
+                borderRadius: "4px",
+              }}
+            >
+              {ticket.details}
+            </Card.Text>
             <Button
               compact
               inverted
@@ -432,7 +443,7 @@ class Ticket extends React.Component {
     return (
       <Container className="white-back">
         <center>
-          <h2>Tickets</h2>
+          <h2 style={{ color: "black", margin: "10px 0px" }}>Tickets</h2>
         </center>
         <Header floated="right">
           <Input
@@ -444,14 +455,10 @@ class Ticket extends React.Component {
             placeholder="Search Tickets"
           />
         </Header>
-        <Menu.Menu style={{ paddingBottom: "2em" }}>
-          <Menu.Item>
-            <span>
-              <Icon name="write" /> Create a Ticket
-            </span>{" "}
-            <Icon name="add" onClick={this.openModalT} />
-          </Menu.Item>
-        </Menu.Menu>
+        <Button primary onClick={this.openModalT}>
+          Create a Ticket &nbsp;&nbsp;
+          <Icon name="write" />
+        </Button>
         <Modal basic open={modalT} onClose={this.closeModalT}>
           <Modal.Header>Create Ticket</Modal.Header>
           <Modal.Content>

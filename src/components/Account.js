@@ -1,14 +1,5 @@
 import React, { Fragment } from "react";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Radio,
-  Select,
-  TextArea,
-  Image,
-} from "semantic-ui-react";
+import { Form, Input, Image } from "semantic-ui-react";
 import firebase from "../firebase";
 
 class Account extends React.Component {
@@ -65,7 +56,7 @@ class Account extends React.Component {
     return (
       <Fragment>
         <center>
-          <h2>Account Info</h2>
+          <h2 style={{ color: "black", margin: "10px 0px" }}>Account Info</h2>
           <Image src={this.state.photo} size="small" circular />
         </center>
         <Form>

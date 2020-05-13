@@ -2,10 +2,7 @@
   overflow-x: hidden;
 }
 
-html {
-  background-color: white !important;
-}
-
+@import url("https://fonts.googleapis.com/css2?family=Cardo&family=Montserrat:ital,wght@0,900;1,500&display=swap");
 #zero-pad {
   padding: 0px !important;
 }
@@ -21,11 +18,13 @@ html {
 
 #sidebar-wrapper .sidebar-heading {
   padding: 0.875rem 1.25rem;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  color: white;
 }
 
 #sidebar-wrapper .list-group {
   width: 15rem;
+  color: white;
 }
 
 #page-content-wrapper {
@@ -51,6 +50,10 @@ html {
   }
 }
 
+div > .list-group > #selected {
+  background-color: #2185d0 !important;
+  color: white;
+}
 #card-width-min {
   min-width: 18rem;
   text-align: justify;
@@ -60,8 +63,41 @@ html {
   color: white !important;
 }
 #font-size-card {
-  font-size: 22px;
+  font-size: 26px;
+  font-weight: bolder;
+}
+
+#font-size-sub {
+  font-size: 20px;
   font-weight: bold;
+}
+.out-but:focus {
+  box-shadow: none !important;
+}
+
+.scroll {
+  opacity: 0.7;
+  background-color: #2185d0;
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none !important;
+}
+.scroll:hover {
+  opacity: 1;
+}
+
+.arrow-up {
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -9px;
+  margin-left: -5px;
 }
 
 html,
@@ -101,26 +137,6 @@ body,
 /* ProgressBar.js */
 .progress__bar {
   margin: 0.3em 0 0 0 !important;
-}
-
-/* ColorPanel.js */
-.color__container {
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  width: 35px;
-  border-radius: 3px;
-}
-
-.color__square {
-  width: 35px;
-  height: 35px;
-}
-
-.color__overlay {
-  width: 85px;
-  height: 35px;
-  transform: rotate(225deg);
 }
 
 /* Typing.js */
@@ -245,4 +261,5 @@ body,
 * {
   margin: 0;
   padding: 0;
+  font-family: "Open Sans", sans-serif;
 }
