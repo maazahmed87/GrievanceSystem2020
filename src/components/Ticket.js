@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
+import Table from "react-bootstrap/Table";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -22,6 +23,7 @@ import {
 import Spinner from "../Spinner";
 import FileModal from "./FileModal";
 import ProgressBar from "./ProgressBar";
+import ItemList from "./ItemList";
 import "./App.css";
 
 const options = [
@@ -42,9 +44,11 @@ class Ticket extends React.Component {
     ticketsRef: firebase.database().ref("tickets"),
     storageRef: firebase.storage().ref(),
     imagesRef: firebase.database().ref("images"),
+    itemsRef: firebase.database().ref("items"),
     modalT: false,
     modalD: false,
     modal: false,
+    modelI: false,
     value: "",
     colorValues: [
       "primary",
@@ -66,6 +70,8 @@ class Ticket extends React.Component {
     searchTerm: "",
     searchLoading: false,
     searchResults: [],
+    itemName: "",
+    itemCost: "",
   };
 
   componentDidMount() {
@@ -263,6 +269,7 @@ class Ticket extends React.Component {
       subject: ticketSubject,
       category: value,
       images: { t: "" },
+      items: { j: "" },
       createdBy: {
         name: user.displayName,
         email: user.email,
@@ -287,11 +294,44 @@ class Ticket extends React.Component {
       });
   };
 
+  addItem = () => {
+    const { itemName, itemCost, postId, ticketsRef } = this.state;
+    const newItem = {
+      name: itemName,
+      cost: itemCost,
+    };
+
+    ticketsRef
+      .child(postId)
+      .child("items")
+      .push()
+      .set(newItem)
+      .then(() => {
+        this.setState({
+          itemName: "",
+          itemCost: "",
+        });
+        this.closeModalI();
+        console.log("item added");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.isFormValid(this.state)) {
       this.addTicket();
     }
+  };
+
+  handleItem = (event) => {
+    event.preventDefault();
+    if (this.isItemValid(this.state)) {
+      this.addItem();
+    }
+    this.addListeners();
   };
 
   handleDelete = () => {
@@ -308,7 +348,7 @@ class Ticket extends React.Component {
 
   handleChangeDrop = (e, { value }) => this.setState({ value });
 
-  displayTickets = (tickets) =>
+  displayTickets = (tickets, total = 0) =>
     tickets.length > 0 &&
     tickets.map((ticket) => (
       <div
@@ -352,6 +392,7 @@ class Ticket extends React.Component {
               <strong>Category: </strong>
               {ticket.category}
             </Card.Title>
+
             <Card.Subtitle className="mb-2">
               <strong style={{ fontSize: "18px" }}>Status: </strong>
               <Label size="small" color="black" basic>
@@ -371,6 +412,54 @@ class Ticket extends React.Component {
             >
               {ticket.details}
             </Card.Text>
+            {ticket.category === "category 1" && (
+              <div style={{ paddingBottom: "10px" }}>
+                <h4>Items</h4>
+                <Card.Text>
+                  <Table striped bordered hover size="sm">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{ color: "white!important" }}>
+                      {Object.entries(ticket.items).map(([key, item]) => {
+                        const itemKey = `item-${key}`;
+                        console.log(itemKey);
+                        if (itemKey !== "item-i") {
+                          let cost = parseInt(`${item.cost}`);
+                          total = total + cost;
+                        }
+                        return (
+                          <ItemList
+                            name={item.name}
+                            cost={item.cost}
+                            key={itemKey}
+                            ikey={itemKey}
+                          />
+                        );
+                      })}
+                      <tr>
+                        <td>Total</td>
+                        <td>{total}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </Card.Text>
+                <Button
+                  compact
+                  inverted
+                  variant="outline-light"
+                  color="white"
+                  onClick={() =>
+                    this.setState({ postId: ticket.id, modalI: true })
+                  }
+                >
+                  Add item
+                </Button>
+              </div>
+            )}
             <Button
               compact
               inverted
@@ -416,6 +505,8 @@ class Ticket extends React.Component {
   isFormValid = ({ ticketName, ticketDetails, ticketSubject, value }) =>
     ticketName && ticketDetails && ticketSubject && value;
 
+  isItemValid = ({ itemName, itemCost }) => itemName && itemCost;
+
   openModalT = () => this.setState({ modalT: true });
 
   closeModalT = () => this.setState({ modalT: false });
@@ -428,11 +519,16 @@ class Ticket extends React.Component {
 
   closeModal = () => this.setState({ modal: false });
 
+  openModalI = () => this.setState({ modalI: true });
+
+  closeModalI = () => this.setState({ modalI: false });
+
   render() {
     const {
       tickets,
       modalT,
       modalD,
+      modalI,
       value,
       loading,
       searchLoading,
@@ -506,6 +602,40 @@ class Ticket extends React.Component {
               <Icon name="checkmark" /> Submit
             </Button>
             <Button color="red" inverted onClick={this.closeModalT}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
+
+        <Modal basic open={modalI} onClose={this.closeModalI}>
+          <Modal.Header>Add Item</Modal.Header>
+          <Modal.Content>
+            <Form onSubmit={this.handleItem}>
+              <Form.Field>
+                <Input
+                  fluid
+                  label="Item Name"
+                  name="itemName"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+
+              <Form.Field>
+                <Input
+                  fluid
+                  label="Item Cost"
+                  name="itemCost"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+            </Form>
+          </Modal.Content>
+
+          <Modal.Actions>
+            <Button color="green" inverted onClick={this.handleItem}>
+              <Icon name="checkmark" /> Add
+            </Button>
+            <Button color="red" inverted onClick={this.closeModalI}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
