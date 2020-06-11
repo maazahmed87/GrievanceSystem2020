@@ -348,7 +348,7 @@ class Ticket extends React.Component {
 
   handleChangeDrop = (e, { value }) => this.setState({ value });
 
-  displayTickets = (tickets, total = 0) =>
+  displayTickets = (tickets, total = 0, oldtotal = 0) =>
     tickets.length > 0 &&
     tickets.map((ticket) => (
       <div
@@ -412,54 +412,56 @@ class Ticket extends React.Component {
             >
               {ticket.details}
             </Card.Text>
-            {ticket.category === "category 1" && (
-              <div style={{ paddingBottom: "10px" }}>
-                <h4>Items</h4>
-                <Card.Text>
-                  <Table striped bordered hover size="sm">
-                    <thead>
-                      <tr>
-                        <th>Item</th>
-                        <th>Cost</th>
-                      </tr>
-                    </thead>
-                    <tbody style={{ color: "white!important" }}>
-                      {Object.entries(ticket.items).map(([key, item]) => {
-                        const itemKey = `item-${key}`;
-                        console.log(itemKey);
-                        if (itemKey !== "item-i") {
-                          let cost = parseInt(`${item.cost}`);
-                          total = total + cost;
-                        }
-                        return (
-                          <ItemList
-                            name={item.name}
-                            cost={item.cost}
-                            key={itemKey}
-                            ikey={itemKey}
-                          />
-                        );
-                      })}
-                      <tr>
-                        <td>Total</td>
-                        <td>{total}</td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Text>
-                <Button
-                  compact
-                  inverted
-                  variant="outline-light"
-                  color="white"
-                  onClick={() =>
-                    this.setState({ postId: ticket.id, modalI: true })
-                  }
-                >
-                  Add item
-                </Button>
-              </div>
-            )}
+
+            <div style={{ paddingBottom: "10px" }}>
+              <h4>Items</h4>
+              <Card.Text>
+                <Table striped bordered hover size="sm">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody style={{ color: "white!important" }}>
+                    {Object.entries(ticket.items).map(([key, item]) => {
+                      const itemKey = `item-${key}`;
+                      console.log(itemKey);
+                      if (itemKey !== "item-j") {
+                        let cost = parseInt(`${item.cost}`);
+                        total = total + cost;
+                      } else {
+                        total = total - oldtotal;
+                      }
+                      return (
+                        <ItemList
+                          name={item.name}
+                          cost={item.cost}
+                          key={itemKey}
+                          ikey={itemKey}
+                        />
+                      );
+                    })}
+                    <tr>
+                      <td>Total</td>
+                      <td>{(oldtotal = total)}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Card.Text>
+              <Button
+                compact
+                inverted
+                variant="outline-light"
+                color="white"
+                onClick={() =>
+                  this.setState({ postId: ticket.id, modalI: true })
+                }
+              >
+                Add item
+              </Button>
+            </div>
+
             <Button
               compact
               inverted
