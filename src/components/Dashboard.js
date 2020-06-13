@@ -85,14 +85,7 @@ class Dashboard extends React.Component {
   }
 
   addListeners = () => {
-    let loadedTickets = [];
-    let loadedCat1Tickets = [];
-    let loadedCat2Tickets = [];
-    let loadedCat3Tickets = [];
-    let loadedPendingCount = 0;
-    let c1 = 0;
-    let c2 = 0;
-    let c3 = 0;
+    let userType = this.state.userType;
     this.setState({ loading: true });
     let user = this.state.user;
 
@@ -107,6 +100,31 @@ class Dashboard extends React.Component {
         }
       }
     });
+    if (userType === "user") {
+      this.loadUserTickets();
+    } else {
+      this.loadAdminTickets();
+    }
+
+    let loadedUserDetails = [];
+    this.state.usersRef.on("child_added", (snap) => {
+      if (user.email === snap.val().email) {
+        loadedUserDetails.push(snap.val());
+      }
+      this.setState({ userDetails: loadedUserDetails, loading: false });
+    });
+  };
+
+  loadUserTickets = () => {
+    let loadedTickets = [];
+    let loadedCat1Tickets = [];
+    let loadedCat2Tickets = [];
+    let loadedCat3Tickets = [];
+    let loadedPendingCount = 0;
+    let c1 = 0;
+    let c2 = 0;
+    let c3 = 0;
+    let user = this.state.user;
 
     this.state.ticketsRef.on("child_added", (snap) => {
       if (
@@ -157,13 +175,36 @@ class Dashboard extends React.Component {
         pendingCount: loadedPendingCount,
       });
     });
+  };
 
-    let loadedUserDetails = [];
-    this.state.usersRef.on("child_added", (snap) => {
-      if (user.email === snap.val().email) {
-        loadedUserDetails.push(snap.val());
+  loadAdminTickets = () => {
+    let domain = this.state.domain;
+    let loadedPendingCount = 0;
+    let loadedTickets = [];
+    this.state.ticketsRef.on("child_added", (snap) => {
+      if (domain === snap.val().category) {
+        loadedTickets.push(snap.val());
+        if (snap.val().status === "pending") {
+          loadedPendingCount++;
+        }
       }
-      this.setState({ userDetails: loadedUserDetails, loading: false });
+    });
+    console.log(loadedTickets);
+    let completedCount = loadedTickets.length - loadedPendingCount;
+    let statusArray = [loadedPendingCount, completedCount];
+    let statusDataset = this.state.chart2.datasets.slice(0);
+    statusDataset[0].data = statusArray;
+
+    this.setState({
+      chart: Object.assign({}, this.state.data, {
+        datasets: statusDataset,
+      }),
+    });
+
+    this.setState({
+      tickets: loadedTickets,
+      closedCount: completedCount,
+      pendingCount: loadedPendingCount,
     });
   };
 
@@ -252,19 +293,21 @@ class Dashboard extends React.Component {
               </Col>
             </Row>
             <Row style={{ margin: "20px 0px" }}>
-              <Col
-                sm={6}
-                style={{
-                  textAlign: "center",
-                  border: "1px solid #dfdfdf",
-                  borderCollapse: "collapse",
-                }}
-              >
-                <h2 style={{ color: "black" }}>
-                  Category wise ticket Distribution
-                </h2>
-                <Pie data={chart1} />
-              </Col>
+              {this.state.userType === "user" && (
+                <Col
+                  sm={6}
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #dfdfdf",
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <h2 style={{ color: "black" }}>
+                    Category wise ticket Distribution
+                  </h2>
+                  <Pie data={chart1} />
+                </Col>
+              )}
 
               <Col
                 sm={6}
