@@ -3,7 +3,6 @@ import React from "react";
 class FileLink extends React.Component {
   render() {
     const { fileName, fileRef, ikey } = this.props;
-    console.log(this.props.file);
 
     return (
       <span>

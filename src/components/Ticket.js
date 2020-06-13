@@ -35,6 +35,8 @@ const options = [
 class Ticket extends React.Component {
   state = {
     user: this.props.currentUser,
+    userType: "",
+    domain: "",
     tickets: [],
     ticketName: "",
     ticketDetails: "",
@@ -42,6 +44,7 @@ class Ticket extends React.Component {
     status: "pending",
     loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
+    usersRef: firebase.database().ref("users"),
     storageRef: firebase.storage().ref(),
     imagesRef: firebase.database().ref("images"),
     itemsRef: firebase.database().ref("items"),
@@ -75,6 +78,9 @@ class Ticket extends React.Component {
   };
 
   componentDidMount() {
+    this.addListeners();
+  }
+  componentWillMount() {
     this.addListeners();
   }
 
@@ -229,19 +235,45 @@ class Ticket extends React.Component {
 
   getRandomColor() {
     let colors = ["primary", "success", "danger", "warning", "info", "dark"];
-
     var color = colors[Math.floor(Math.random() * colors.length)];
     return color;
   }
 
   addListeners = () => {
-    let loadedTickets = [];
     this.setState({ loading: true });
     let user = this.state.user;
-    this.state.ticketsRef.on("child_added", (snap) => {
-      if (user.email === snap.val().createdBy.email) {
-        loadedTickets.push(snap.val());
+    this.state.usersRef.on("child_added", (snap) => {
+      if (user.email === snap.val().email) {
+        if (snap.val().type === "admin") {
+          this.setState({ userType: "admin", domain: snap.val().domain });
+          console.log(snap.val().type);
+        } else {
+          this.setState({ userType: "user" });
+          console.log(snap.val().type);
+        }
       }
+    });
+    this.getTickets();
+  };
+
+  getTickets = () => {
+    let loadedTickets = [];
+    let user = this.state.user;
+    this.state.ticketsRef.on("child_added", (snap) => {
+      if (
+        this.state.domain === snap.val().category &&
+        this.state.userType === "admin"
+      ) {
+        loadedTickets.push(snap.val());
+        console.log(snap.val().category);
+      } else if (
+        this.state.userType === "user" &&
+        user.email === snap.val().createdBy.email
+      ) {
+        loadedTickets.push(snap.val());
+        console.log(snap.val().category);
+      }
+      console.log(loadedTickets);
       this.setState({ tickets: loadedTickets, loading: false });
       this.getRandomColor();
     });
@@ -413,54 +445,58 @@ class Ticket extends React.Component {
               {ticket.details}
             </Card.Text>
 
-            <div style={{ paddingBottom: "10px" }}>
-              <h4>Items</h4>
-              <Card.Text>
-                <Table striped bordered hover size="sm">
-                  <thead>
-                    <tr>
-                      <th>Item</th>
-                      <th>Cost</th>
-                    </tr>
-                  </thead>
-                  <tbody style={{ color: "white!important" }}>
-                    {Object.entries(ticket.items).map(([key, item]) => {
-                      const itemKey = `item-${key}`;
-                      console.log(itemKey);
-                      if (itemKey !== "item-j") {
-                        let cost = parseInt(`${item.cost}`);
-                        total = total + cost;
-                      } else {
-                        total = total - oldtotal;
-                      }
-                      return (
-                        <ItemList
-                          name={item.name}
-                          cost={item.cost}
-                          key={itemKey}
-                          ikey={itemKey}
-                        />
-                      );
-                    })}
-                    <tr>
-                      <td>Total</td>
-                      <td>{(oldtotal = total)}</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Text>
-              <Button
-                compact
-                inverted
-                variant="outline-light"
-                color="white"
-                onClick={() =>
-                  this.setState({ postId: ticket.id, modalI: true })
-                }
-              >
-                Add item
-              </Button>
-            </div>
+            {ticket.category === "category 1" && (
+              <div style={{ paddingBottom: "10px" }}>
+                <h4>Items</h4>
+                <Card.Text>
+                  <Table striped bordered hover size="sm">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{ color: "white!important" }}>
+                      {Object.entries(ticket.items).map(([key, item]) => {
+                        const itemKey = `item-${key}`;
+                        if (itemKey !== "item-j") {
+                          let cost = parseInt(`${item.cost}`);
+                          total = total + cost;
+                        } else {
+                          total = total - oldtotal;
+                          return null;
+                        }
+                        return (
+                          <ItemList
+                            name={item.name}
+                            cost={item.cost}
+                            key={itemKey}
+                            ikey={itemKey}
+                          />
+                        );
+                      })}
+                      <tr>
+                        <td>Total</td>
+                        <td>{(oldtotal = total)}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </Card.Text>
+                {this.state.userType === "admin" && (
+                  <Button
+                    compact
+                    inverted
+                    variant="outline-light"
+                    color="white"
+                    onClick={() =>
+                      this.setState({ postId: ticket.id, modalI: true })
+                    }
+                  >
+                    Add item
+                  </Button>
+                )}
+              </div>
+            )}
 
             <Button
               compact

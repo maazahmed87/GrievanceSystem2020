@@ -11,6 +11,8 @@ import "./App.css";
 class Dashboard extends React.Component {
   state = {
     user: this.props.currentUser,
+    userType: "",
+    domain: "",
     tickets: [],
     cat1Tickets: [],
     cat2Tickets: [],
@@ -20,7 +22,7 @@ class Dashboard extends React.Component {
     userDetails: [],
     loading: "false",
     ticketsRef: firebase.database().ref("tickets"),
-    userRef: firebase.database().ref("users"),
+    usersRef: firebase.database().ref("users"),
     value: "",
     colorValues: [
       "primary",
@@ -69,9 +71,12 @@ class Dashboard extends React.Component {
     this.addListeners();
   }
 
+  componentWillMount() {
+    this.addListeners();
+  }
+
   getRandomColor() {
     let colors = ["primary", "success", "danger", "warning", "info", "dark"];
-
     var color = colors[Math.floor(Math.random() * colors.length)];
     return color;
   }
@@ -87,8 +92,24 @@ class Dashboard extends React.Component {
     let c3 = 0;
     this.setState({ loading: true });
     let user = this.state.user;
+
+    this.state.usersRef.on("child_added", (snap) => {
+      if (user.email === snap.val().email) {
+        if (snap.val().type === "admin") {
+          this.setState({ userType: "admin", domain: snap.val().domain });
+          console.log(snap.val().type);
+        } else {
+          this.setState({ userType: "user" });
+          console.log(snap.val().type);
+        }
+      }
+    });
+
     this.state.ticketsRef.on("child_added", (snap) => {
-      if (user.email === snap.val().createdBy.email) {
+      if (
+        this.state.userType === "user" &&
+        user.email === snap.val().createdBy.email
+      ) {
         loadedTickets.push(snap.val());
         if ("category 1" === snap.val().category) {
           loadedCat1Tickets.push(snap.val());
@@ -107,7 +128,6 @@ class Dashboard extends React.Component {
         }
       }
       let completedCount = loadedTickets.length - loadedPendingCount;
-      console.log(completedCount);
 
       let countArray = [c1, c2, c3];
       let statusArray = [loadedPendingCount, completedCount];
@@ -136,7 +156,7 @@ class Dashboard extends React.Component {
     });
 
     let loadedUserDetails = [];
-    this.state.userRef.on("child_added", (snap) => {
+    this.state.usersRef.on("child_added", (snap) => {
       if (user.email === snap.val().email) {
         loadedUserDetails.push(snap.val());
       }

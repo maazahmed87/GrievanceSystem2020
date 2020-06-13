@@ -19,6 +19,7 @@ class Register extends React.Component {
     password: "",
     passwordConfirmation: "",
     errors: [],
+    type: "",
     loading: false,
     usersRef: firebase.database().ref("users"),
   };
@@ -133,6 +134,7 @@ class Register extends React.Component {
       usn,
       password,
       passwordConfirmation,
+      type,
       errors,
       loading,
     } = this.state;
