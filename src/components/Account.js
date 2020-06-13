@@ -15,6 +15,9 @@ class Account extends React.Component {
 
   componentDidMount() {
     this.addListeners();
+    let user = this.state.name;
+    let title = "Account | " + user;
+    document.title = title;
   }
 
   addListeners = () => {

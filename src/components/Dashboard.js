@@ -69,6 +69,9 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     this.addListeners();
+    let user = this.state.user.displayName;
+    let title = "Dashboard | " + user;
+    document.title = title;
   }
 
   componentWillMount() {

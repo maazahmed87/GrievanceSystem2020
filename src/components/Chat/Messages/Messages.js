@@ -39,6 +39,9 @@ class Messages extends React.Component {
       this.addListeners(channel.id);
       this.addUserStarsListener(channel.id, user.uid);
     }
+    let userName = user.displayName;
+    let title = "Chat | " + userName;
+    document.title = title;
   }
 
   componentWillUnmount() {
