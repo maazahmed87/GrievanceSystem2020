@@ -237,7 +237,7 @@ class Ticket extends React.Component {
   };
 
   getRandomColor() {
-    let colors = ["primary", "success", "danger", "warning", "info", "dark"];
+    let colors = ["primary", "success", "danger", "warning", "info"];
     var color = colors[Math.floor(Math.random() * colors.length)];
     return color;
   }
