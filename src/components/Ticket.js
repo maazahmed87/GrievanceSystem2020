@@ -268,15 +268,13 @@ class Ticket extends React.Component {
         this.state.userType === "admin"
       ) {
         loadedTickets.push(snap.val());
-        console.log(snap.val().category);
       } else if (
         this.state.userType === "user" &&
         user.email === snap.val().createdBy.email
       ) {
         loadedTickets.push(snap.val());
-        console.log(snap.val().category);
       }
-      console.log(loadedTickets);
+
       this.setState({ tickets: loadedTickets, loading: false });
       this.getRandomColor();
     });
