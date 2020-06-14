@@ -52,6 +52,7 @@ class Ticket extends React.Component {
     modalD: false,
     modal: false,
     modelI: false,
+    modalC: false,
     value: "",
     colorValues: [
       "primary",
@@ -375,6 +376,14 @@ class Ticket extends React.Component {
     this.addListeners();
   };
 
+  handleCloseTicket = () => {
+    let ticket_id = this.state.postId;
+    let ref = this.state.ticketsRef;
+    ref.child(ticket_id).update({ status: "closed" });
+    this.closeModalC();
+    this.addListeners();
+  };
+
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -496,6 +505,19 @@ class Ticket extends React.Component {
                     Add item
                   </Button>
                 )}
+                {this.state.userType === "admin" && (
+                  <Button
+                    compact
+                    inverted
+                    variant="outline-light"
+                    color="white"
+                    onClick={() =>
+                      this.setState({ postId: ticket.id, modalC: true })
+                    }
+                  >
+                    Close ticket
+                  </Button>
+                )}
               </div>
             )}
 
@@ -562,12 +584,17 @@ class Ticket extends React.Component {
 
   closeModalI = () => this.setState({ modalI: false });
 
+  openModalC = () => this.setState({ modalC: true });
+
+  closeModalC = () => this.setState({ modalC: false });
+
   render() {
     const {
       tickets,
       modalT,
       modalD,
       modalI,
+      modalC,
       value,
       loading,
       searchLoading,
@@ -645,7 +672,6 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-
         <Modal basic open={modalI} onClose={this.closeModalI}>
           <Modal.Header>Add Item</Modal.Header>
           <Modal.Content>
@@ -679,7 +705,6 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-
         <Modal basic open={modalD} onClose={this.closeModalD}>
           <Modal.Header>Delete Ticket? </Modal.Header>
 
@@ -693,6 +718,18 @@ class Ticket extends React.Component {
           </Modal.Actions>
         </Modal>
 
+        <Modal basic open={modalC} onClose={this.closeModalC}>
+          <Modal.Header>Close Ticket? </Modal.Header>
+
+          <Modal.Actions>
+            <Button color="red" inverted onClick={this.handleCloseTicket}>
+              <Icon name="trash" /> Close
+            </Button>
+            <Button color="green" inverted onClick={this.closeModalC}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
         <div className="row justify-content-lg-center">
           {loading ? (
             <Spinner />
