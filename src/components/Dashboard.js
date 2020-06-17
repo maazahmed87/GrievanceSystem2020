@@ -115,6 +115,23 @@ class Dashboard extends React.Component {
     });
   };
 
+  ticketViewTotal = () => {
+    let option = "tickets";
+    this.props.callbackFromParent(option);
+  };
+
+  ticketViewPending = () => {
+    let option = "tickets";
+    let status = "pending";
+    this.props.callBackOption(option, status);
+  };
+
+  ticketViewClosed = () => {
+    let option = "tickets";
+    let status = "closed";
+    this.props.callBackOption(option, status);
+  };
+
   loadUserTickets = () => {
     let loadedTickets = [];
     let loadedCat1Tickets = [];
@@ -233,6 +250,7 @@ class Dashboard extends React.Component {
                 style={{
                   height: "25vh",
                 }}
+                onClick={this.ticketViewTotal}
               >
                 <Card
                   style={{
@@ -254,6 +272,7 @@ class Dashboard extends React.Component {
                 style={{
                   height: "25vh",
                 }}
+                onClick={this.ticketViewPending}
               >
                 <Card
                   style={{
@@ -275,6 +294,7 @@ class Dashboard extends React.Component {
                 style={{
                   height: "25vh",
                 }}
+                onClick={this.ticketViewClosed}
               >
                 <Card
                   style={{

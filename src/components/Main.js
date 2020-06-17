@@ -12,6 +12,7 @@ import Dashboard from "./Dashboard";
 class Main extends React.Component {
   state = {
     active: "tickets",
+    search: "",
   };
   handleSignout = () => {
     firebase
@@ -41,9 +42,17 @@ class Main extends React.Component {
     this.setState({ intervalId: intervalId });
   }
 
+  myCallback1 = (childData) => {
+    this.setState({ active: childData, search: "" });
+  };
+
+  myCallback2 = (childData, term) => {
+    this.setState({ active: childData, search: term });
+  };
+
   render() {
     const { currentUser } = this.props;
-    const { active } = this.state;
+    const { active, search } = this.state;
 
     return (
       <div className="d-flex" id="wrapper">
@@ -58,7 +67,7 @@ class Main extends React.Component {
               className="list-group-item list-group-item-action"
               style={{ background: "#253544", cursor: "pointer" }}
               id={active === "dashboard" ? "selected" : ""}
-              onClick={() => this.setState({ active: "dashboard" })}
+              onClick={() => this.setState({ active: "dashboard", search: "" })}
             >
               Dashboard
             </a>
@@ -66,7 +75,7 @@ class Main extends React.Component {
               className="list-group-item list-group-item-action"
               style={{ background: "#253544", cursor: "pointer" }}
               id={active === "tickets" ? "selected" : ""}
-              onClick={() => this.setState({ active: "tickets" })}
+              onClick={() => this.setState({ active: "tickets", search: "" })}
             >
               Tickets
             </a>
@@ -74,14 +83,14 @@ class Main extends React.Component {
               id={active === "chat" ? "selected" : ""}
               className="list-group-item list-group-item-action "
               style={{ background: "#253544", cursor: "pointer" }}
-              onClick={() => this.setState({ active: "chat" })}
+              onClick={() => this.setState({ active: "chat", search: "" })}
             >
               Chat
             </a>
             <a
               className="list-group-item list-group-item-action"
               style={{ background: "#253544", cursor: "pointer" }}
-              onClick={() => this.setState({ active: "account" })}
+              onClick={() => this.setState({ active: "account", search: "" })}
               id={active === "account" ? "selected" : ""}
             >
               Account
@@ -150,9 +159,17 @@ class Main extends React.Component {
           </nav>
 
           <div className="container-fluid">
-            {active === "dashboard" && <Dashboard currentUser={currentUser} />}
+            {active === "dashboard" && (
+              <Dashboard
+                currentUser={currentUser}
+                callbackFromParent={this.myCallback1}
+                callBackOption={this.myCallback2}
+              />
+            )}
             {active === "account" && <Account currentUser={currentUser} />}
-            {active === "tickets" && <Ticket currentUser={currentUser} />}
+            {active === "tickets" && (
+              <Ticket currentUser={currentUser} term={search} />
+            )}
             {active === "chat" && <Chat />}
             <button
               title="Back to top"

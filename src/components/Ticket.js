@@ -71,7 +71,7 @@ class Ticket extends React.Component {
     message: "",
     errors: [],
     deleteId: "",
-    searchTerm: "",
+    searchTerm: this.props.term,
     searchLoading: false,
     searchResults: [],
     itemName: "",
@@ -83,6 +83,7 @@ class Ticket extends React.Component {
     let user = this.state.user.displayName;
     let title = "Tickets | " + user;
     document.title = title;
+    this.handleSearchTermChange(this.state.searchTerm);
   }
   componentWillMount() {
     this.addListeners();
@@ -114,6 +115,17 @@ class Ticket extends React.Component {
     this.setState(
       {
         searchTerm: event.target.value,
+        searchLoading: true,
+      },
+
+      () => this.handleSearchTickets()
+    );
+  };
+
+  handleSearchTermChange = (term) => {
+    this.setState(
+      {
+        searchTerm: term,
         searchLoading: true,
       },
       () => this.handleSearchTickets()
