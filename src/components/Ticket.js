@@ -5,6 +5,7 @@ import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
+import Accordion from "react-bootstrap/Accordion";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -455,17 +456,40 @@ class Ticket extends React.Component {
                 </span>
               </Label>
             </Card.Subtitle>
-            <Card.Text
-              style={{
-                fontSize: "14px",
-                color: "black",
-                background: "white",
-                padding: "8px",
-                borderRadius: "4px",
-              }}
+            <Accordion
+              defaultActiveKey="0"
+              style={{ color: "black", paddingBottom: "5px" }}
             >
-              {ticket.details}
-            </Card.Text>
+              <Card>
+                <Accordion.Toggle
+                  as={Card.Header}
+                  eventKey="1"
+                  style={{
+                    fontWeight: "light",
+                    color: "#808080",
+                    fontSize: "0.8em",
+                  }}
+                >
+                  Read description
+                  <span style={{ float: "right" }}>
+                    <Icon name="arrow down" />
+                  </span>
+                </Accordion.Toggle>
+                <Accordion.Collapse eventKey="1">
+                  <Card.Body
+                    style={{
+                      fontSize: "14px",
+                      color: "black",
+                      background: "white",
+                      padding: "8px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    {ticket.details}
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
 
             {ticket.category === "category 1" && (
               <div style={{ paddingBottom: "10px" }}>
@@ -612,6 +636,7 @@ class Ticket extends React.Component {
       searchLoading,
       searchResults,
       searchTerm,
+      userType,
     } = this.state;
 
     return (
@@ -629,10 +654,12 @@ class Ticket extends React.Component {
             placeholder="Search Tickets"
           />
         </Header>
-        <Button primary onClick={this.openModalT}>
-          Create a Ticket &nbsp;&nbsp;
-          <Icon name="write" />
-        </Button>
+        {userType === "user" && (
+          <Button primary onClick={this.openModalT}>
+            Create a Ticket &nbsp;&nbsp;
+            <Icon name="write" />
+          </Button>
+        )}
         <Modal basic open={modalT} onClose={this.closeModalT}>
           <Modal.Header>Create Ticket</Modal.Header>
           <Modal.Content>
