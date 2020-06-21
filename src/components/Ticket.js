@@ -439,10 +439,22 @@ class Ticket extends React.Component {
             </button>
           </Card.Header>
           <Card.Body>
+            {this.state.userType === "admin" && (
+              <Card.Title id="font-size-sub ">
+                <strong>By: </strong>
+                {ticket.createdBy.email}
+                <br />
+              </Card.Title>
+            )}
+            <Card.Title id="font-size-sub ">
+              <strong>Id: </strong>
+              {ticket.timestamp}
+            </Card.Title>
             <Card.Title id="font-size-sub">
               <strong>Subject: </strong>
               {ticket.subject}
             </Card.Title>
+
             <Card.Title id="font-size-sub ">
               <strong>Category: </strong>
               {ticket.category}
