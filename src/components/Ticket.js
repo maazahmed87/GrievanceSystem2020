@@ -415,9 +415,12 @@ class Ticket extends React.Component {
         <Card
           style={{ minWidth: "18rem", margin: "10px" }}
           key={ticket.id}
-          bg={this.getRandomColor()}
+          bg={ticket.status === "closed" ? "success" : "danger"}
         >
-          <Card.Header id="font-size-card">
+          <Card.Header
+            id="font-size-card"
+            style={{ textTransform: "capitalize" }}
+          >
             {ticket.name}
             <button
               type="button"
@@ -462,7 +465,11 @@ class Ticket extends React.Component {
 
             <Card.Subtitle className="mb-2">
               <strong style={{ fontSize: "18px" }}>Status: </strong>
-              <Label size="small" color="black" basic>
+              <Label
+                size="small"
+                color={ticket.status !== "closed" ? "red" : "green"}
+                basic
+              >
                 <span style={{ textTransform: "capitalize" }}>
                   {ticket.status}
                 </span>
