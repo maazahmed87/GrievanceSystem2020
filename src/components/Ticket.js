@@ -54,6 +54,7 @@ class Ticket extends React.Component {
     modal: false,
     modelI: false,
     modalC: false,
+    modalComm: false,
     value: "",
     colorValues: [
       "primary",
@@ -77,6 +78,7 @@ class Ticket extends React.Component {
     searchResults: [],
     itemName: "",
     itemCost: "",
+    comment: "",
   };
 
   componentDidMount() {
@@ -321,6 +323,9 @@ class Ticket extends React.Component {
         name: user.displayName,
         email: user.email,
       },
+      comments: {
+        p: "",
+      },
     };
 
     ticketsRef
@@ -366,6 +371,30 @@ class Ticket extends React.Component {
       });
   };
 
+  addComment = () => {
+    const { comment, postId, ticketsRef, userType } = this.state;
+    const newComment = {
+      comment: comment,
+      by: userType,
+    };
+
+    ticketsRef
+      .child(postId)
+      .child("comments")
+      .push()
+      .set(newComment)
+      .then(() => {
+        this.setState({
+          comment: "",
+        });
+        this.closeModalComm();
+        console.log("comment added");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.isFormValid(this.state)) {
@@ -377,6 +406,14 @@ class Ticket extends React.Component {
     event.preventDefault();
     if (this.isItemValid(this.state)) {
       this.addItem();
+    }
+    this.addListeners();
+  };
+
+  handleComment = (event) => {
+    event.preventDefault();
+    if (this.isCommentValid(this.state)) {
+      this.addComment();
     }
     this.addListeners();
   };
@@ -585,6 +622,17 @@ class Ticket extends React.Component {
             >
               Upload file
             </Button>
+            <Button
+              compact
+              inverted
+              variant="outline-light"
+              color="white"
+              onClick={() =>
+                this.setState({ postId: ticket.id, modalComm: true })
+              }
+            >
+              Add comment
+            </Button>
             <Card.Text>
               {Object.entries(ticket.images).map(([key, image]) => {
                 const imageKey = `image-${key}`;
@@ -623,6 +671,8 @@ class Ticket extends React.Component {
 
   isItemValid = ({ itemName, itemCost }) => itemName && itemCost;
 
+  isCommentValid = ({ comment }) => comment;
+
   openModalT = () => this.setState({ modalT: true });
 
   closeModalT = () => this.setState({ modalT: false });
@@ -643,6 +693,10 @@ class Ticket extends React.Component {
 
   closeModalC = () => this.setState({ modalC: false });
 
+  openModalComm = () => this.setState({ modalComm: true });
+
+  closeModalComm = () => this.setState({ modalComm: false });
+
   render() {
     const {
       tickets,
@@ -650,6 +704,7 @@ class Ticket extends React.Component {
       modalD,
       modalI,
       modalC,
+      modalComm,
       value,
       loading,
       searchLoading,
@@ -763,6 +818,31 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
+
+        <Modal basic open={modalComm} onClose={this.closeModalComm}>
+          <Modal.Header>Add Comment</Modal.Header>
+          <Modal.Content>
+            <Form onSubmit={this.handleComment}>
+              <Form.Field>
+                <Input
+                  fluid
+                  label="comment"
+                  name="comment"
+                  onChange={this.handleChange}
+                />
+              </Form.Field>
+            </Form>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button color="green" inverted onClick={this.handleComment}>
+              <Icon name="checkmark" /> Add
+            </Button>
+            <Button color="red" inverted onClick={this.closeModalComm}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
+
         <Modal basic open={modalD} onClose={this.closeModalD}>
           <Modal.Header>Delete Ticket? </Modal.Header>
 
@@ -788,6 +868,7 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
+
         <div className="row justify-content-lg-center">
           {loading ? (
             <Spinner />
