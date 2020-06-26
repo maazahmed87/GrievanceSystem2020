@@ -819,6 +819,7 @@ class Ticket extends React.Component {
             </Button>
           )}
         </div>
+        <Divider hidden />
         <Modal basic open={modalT} onClose={this.closeModalT}>
           <Modal.Header>Create Ticket</Modal.Header>
           <Modal.Content>
