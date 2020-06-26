@@ -264,7 +264,7 @@ body,
   font-family: "Source Sans Pro", sans-serif;
 }
 
-@media (min-width: 300px) {
+@media (max-width: 450px) {
   #main-pad {
     padding: 0px 3px !important;
   }

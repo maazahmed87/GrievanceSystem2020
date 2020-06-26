@@ -552,6 +552,20 @@ class Ticket extends React.Component {
                     </span>
                   </Label>
                 </Card.Subtitle>
+                {this.state.userType === "admin" && (
+                  <Button
+                    compact
+                    content="Close ticket"
+                    labelPosition="left"
+                    size="small"
+                    icon="close"
+                    primary
+                    onClick={() =>
+                      this.setState({ postId: ticket.id, modalC: true })
+                    }
+                  />
+                )}
+                <Divider horizontal />
 
                 <Card.Body
                   style={{
@@ -610,30 +624,20 @@ class Ticket extends React.Component {
                           </Table.Footer>
                         </Table>
                       )}
+                      {this.state.userType === "admin" && (
+                        <Button
+                          compact
+                          content="Add Item"
+                          labelPosition="left"
+                          size="small"
+                          icon="add"
+                          primary
+                          onClick={() =>
+                            this.setState({ postId: ticket.id, modalI: true })
+                          }
+                        />
+                      )}
                     </Card.Text>
-                    <Divider fitted />
-                    {this.state.userType === "admin" && (
-                      <Button
-                        compact
-                        inverted
-                        onClick={() =>
-                          this.setState({ postId: ticket.id, modalI: true })
-                        }
-                      >
-                        Add item
-                      </Button>
-                    )}
-                    {this.state.userType === "admin" && (
-                      <Button
-                        compact
-                        inverted
-                        onClick={() =>
-                          this.setState({ postId: ticket.id, modalC: true })
-                        }
-                      >
-                        Close ticket
-                      </Button>
-                    )}
                   </div>
                 )}
 
