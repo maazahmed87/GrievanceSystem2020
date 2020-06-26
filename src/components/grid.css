@@ -63,23 +63,6 @@
   }
 }
 
-h2 {
-  font: 600 20px/1 "Open Sans", sans-serif;
-  color: #888;
-  margin: 20px 0;
-}
-
-h3 {
-  font: 600 15px/1 "Open Sans", sans-serif;
-  color: #999;
-  margin: 20px 0;
-}
-
-p {
-  font: 12px/1 "Open Sans", sans-serif;
-  color: #777;
-}
-
 a {
   color: #333;
   text-decoration: none;

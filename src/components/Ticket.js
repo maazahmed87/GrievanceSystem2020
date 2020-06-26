@@ -4,8 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
-import Table from "react-bootstrap/Table";
-import Accordion from "react-bootstrap/Accordion";
+
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -19,12 +18,19 @@ import {
   Button,
   Dropdown,
   TextArea,
+  Divider,
+  Segment,
+  Table,
   Header,
+  Comment,
+  Accordion,
+  List,
 } from "semantic-ui-react";
 import Spinner from "../Spinner";
 import FileModal from "./FileModal";
 import ProgressBar from "./ProgressBar";
 import ItemList from "./ItemList";
+import CommentList from "./CommentList";
 import "./App.css";
 
 const options = [
@@ -54,7 +60,6 @@ class Ticket extends React.Component {
     modal: false,
     modelI: false,
     modalC: false,
-    modalComm: false,
     value: "",
     colorValues: [
       "primary",
@@ -78,6 +83,7 @@ class Ticket extends React.Component {
     searchResults: [],
     itemName: "",
     itemCost: "",
+    activeIndex: 0,
     comment: "",
   };
 
@@ -319,12 +325,10 @@ class Ticket extends React.Component {
       category: value,
       images: { t: "" },
       items: { j: "" },
+      comments: { p: "" },
       createdBy: {
         name: user.displayName,
         email: user.email,
-      },
-      comments: {
-        p: "",
       },
     };
 
@@ -372,10 +376,13 @@ class Ticket extends React.Component {
   };
 
   addComment = () => {
-    const { comment, postId, ticketsRef, userType } = this.state;
+    const { comment, postId, ticketsRef, user } = this.state;
     const newComment = {
       comment: comment,
-      by: userType,
+      name: user.displayName,
+      email: user.email,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      avatar: user.photoURL,
     };
 
     ticketsRef
@@ -402,18 +409,28 @@ class Ticket extends React.Component {
     }
   };
 
-  handleItem = (event) => {
-    event.preventDefault();
-    if (this.isItemValid(this.state)) {
-      this.addItem();
-    }
-    this.addListeners();
+  handleAccordion = (e, titleProps) => {
+    const { index } = titleProps;
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
+    this.setState({ activeIndex: newIndex });
   };
 
   handleComment = (event) => {
     event.preventDefault();
     if (this.isCommentValid(this.state)) {
       this.addComment();
+      this.setState({ comment: "" });
+    }
+    document.getElementsByName("comment").value = "";
+    this.addListeners();
+    this.setState({ comment: "" });
+  };
+
+  handleItem = (event) => {
+    event.preventDefault();
+    if (this.isItemValid(this.state)) {
+      this.addItem();
     }
     this.addListeners();
   };
@@ -442,226 +459,289 @@ class Ticket extends React.Component {
 
   displayTickets = (tickets, total = 0, oldtotal = 0) =>
     tickets.length > 0 &&
-    tickets.map((ticket) => (
+    tickets.map((ticket, index = 1) => (
       <div
         key={ticket.id}
         className="col-md-auto col-lg-12"
         id="card-width-min"
-        style={{ color: "white" }}
+        style={{ color: "black" }}
       >
         <Card
           style={{ minWidth: "18rem", margin: "10px" }}
           key={ticket.id}
-          bg={ticket.status === "closed" ? "success" : "danger"}
+          border={ticket.status === "closed" ? "success" : "danger"}
+          fluid
         >
-          <Card.Header
-            id="font-size-card"
-            style={{ textTransform: "capitalize" }}
-          >
-            {ticket.name}
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="Delete ticket"
-              onClick={() => {
-                this.setState({ modalD: true, deleteId: ticket.id });
-              }}
+          <Segment raised>
+            <Accordion.Title
+              active={this.state.activeIndex === index}
+              index={index}
+              id="font-size-card"
               style={{
-                float: "right",
-                outline: "none",
-                background: "transparent",
-                border: "none",
+                textTransform: "capitalize",
+                paddingBottom: "0px",
               }}
+              onClick={this.handleAccordion}
             >
-              <Icon name="trash" />
-            </button>
-          </Card.Header>
-          <Card.Body>
-            {this.state.userType === "admin" && (
-              <Card.Title id="font-size-sub ">
-                <strong>By: </strong>
-                {ticket.createdBy.email}
-                <br />
-              </Card.Title>
-            )}
-            <Card.Title id="font-size-sub ">
-              <strong>Id: </strong>
-              {ticket.timestamp}
-            </Card.Title>
-            <Card.Title id="font-size-sub">
-              <strong>Subject: </strong>
-              {ticket.subject}
-            </Card.Title>
-
-            <Card.Title id="font-size-sub ">
-              <strong>Category: </strong>
-              {ticket.category}
-            </Card.Title>
-
-            <Card.Subtitle className="mb-2">
-              <strong style={{ fontSize: "18px" }}>Status: </strong>
-              <Label
-                size="small"
-                color={ticket.status !== "closed" ? "red" : "green"}
-                basic
-              >
-                <span style={{ textTransform: "capitalize" }}>
+              <Card.Title as="h3">
+                <Label
+                  style={{ textTransform: "capitalize" }}
+                  as="a"
+                  color={ticket.status === "closed" ? "green" : "red"}
+                  ribbon
+                >
                   {ticket.status}
-                </span>
-              </Label>
-            </Card.Subtitle>
-            <Accordion
-              defaultActiveKey="0"
-              style={{ color: "black", paddingBottom: "5px" }}
-            >
-              <Card>
-                <Accordion.Toggle
-                  as={Card.Header}
-                  eventKey="1"
+                </Label>
+                <Icon name="dropdown" />
+                <strong>{ticket.name}</strong>
+                <Button
+                  icon="trash"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Delete ticket"
+                  onClick={() => {
+                    this.setState({ modalD: true, deleteId: ticket.id });
+                  }}
                   style={{
-                    fontWeight: "light",
-                    color: "#808080",
-                    fontSize: "0.8em",
+                    float: "right",
+                    outline: "none!important",
+                    background: "transparent",
+                    border: "none",
+                  }}
+                />
+                {this.state.activeIndex !== index && (
+                  <span style={{ float: "right" }}>
+                    <strong>Id: </strong>
+                    {ticket.timestamp}
+                  </span>
+                )}
+              </Card.Title>
+            </Accordion.Title>
+            <Accordion.Content active={this.state.activeIndex === index}>
+              <Card.Header>
+                {this.state.userType === "admin" && (
+                  <Card.Title>
+                    <strong>By: </strong>
+                    {ticket.createdBy.email}
+                    <br />
+                  </Card.Title>
+                )}
+                <Card.Title>
+                  <strong>Id: </strong>
+                  {ticket.timestamp}
+                </Card.Title>
+                <Card.Title>
+                  <strong>Subject: </strong>
+                  {ticket.subject}
+                </Card.Title>
+
+                <Card.Title id="font-size-sub ">
+                  <strong>Category: </strong>
+                  {ticket.category}
+                </Card.Title>
+
+                <Card.Subtitle className="mb-2">
+                  <strong style={{ fontSize: "18px" }}>Status: </strong>
+                  <Label
+                    size="small"
+                    color={ticket.status !== "closed" ? "red" : "green"}
+                    basic
+                  >
+                    <span style={{ textTransform: "capitalize" }}>
+                      {ticket.status}
+                    </span>
+                  </Label>
+                </Card.Subtitle>
+
+                <Card.Body
+                  style={{
+                    fontSize: "14px",
+                    color: "black",
+                    background: "white",
+                    padding: "8px",
+                    borderRadius: "4px",
                   }}
                 >
-                  Read description
-                  <span style={{ float: "right" }}>
-                    <Icon name="arrow down" />
-                  </span>
-                </Accordion.Toggle>
-                <Accordion.Collapse eventKey="1">
-                  <Card.Body
-                    style={{
-                      fontSize: "14px",
-                      color: "black",
-                      background: "white",
-                      padding: "8px",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {ticket.details}
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion>
-
-            {ticket.category === "category 1" && (
-              <div style={{ paddingBottom: "10px" }}>
-                <h4>Items</h4>
-                <Card.Text>
-                  <Table striped bordered hover size="sm">
-                    <thead>
-                      <tr>
-                        <th>Item</th>
-                        <th>Cost</th>
-                      </tr>
-                    </thead>
-                    <tbody style={{ color: "white!important" }}>
-                      {Object.entries(ticket.items).map(([key, item]) => {
-                        const itemKey = `item-${key}`;
-                        if (itemKey !== "item-j") {
-                          let cost = parseInt(`${item.cost}`);
-                          total = total + cost;
-                        } else {
-                          total = total - oldtotal;
-                          return null;
+                  {ticket.details}
+                </Card.Body>
+                <Divider />
+                {ticket.category === "category 1" && (
+                  <div style={{ paddingBottom: "10px" }}>
+                    <Header>Items</Header>
+                    {Object.keys(ticket.items).length === 1 && (
+                      <span>No items added</span>
+                    )}
+                    <Card.Text>
+                      {Object.keys(ticket.items).length > 1 && (
+                        <Table celled compact color="olive">
+                          <Table.Header>
+                            <Table.Row>
+                              <Table.HeaderCell>Item</Table.HeaderCell>
+                              <Table.HeaderCell>Cost</Table.HeaderCell>
+                            </Table.Row>
+                          </Table.Header>
+                          <Table.Body>
+                            {Object.entries(ticket.items).map(([key, item]) => {
+                              const itemKey = `item-${key}`;
+                              if (itemKey !== "item-j") {
+                                let cost = parseInt(`${item.cost}`);
+                                total = total + cost;
+                              } else {
+                                total = total - oldtotal;
+                                return null;
+                              }
+                              return (
+                                <ItemList
+                                  name={item.name}
+                                  cost={item.cost}
+                                  key={itemKey}
+                                  ikey={itemKey}
+                                />
+                              );
+                            })}
+                          </Table.Body>
+                          <Table.Footer>
+                            <Table.Row>
+                              <Table.HeaderCell>Total</Table.HeaderCell>
+                              <Table.HeaderCell>
+                                {(oldtotal = total)}
+                              </Table.HeaderCell>
+                            </Table.Row>
+                          </Table.Footer>
+                        </Table>
+                      )}
+                    </Card.Text>
+                    <Divider fitted />
+                    {this.state.userType === "admin" && (
+                      <Button
+                        compact
+                        inverted
+                        onClick={() =>
+                          this.setState({ postId: ticket.id, modalI: true })
                         }
-                        return (
-                          <ItemList
-                            name={item.name}
-                            cost={item.cost}
-                            key={itemKey}
-                            ikey={itemKey}
-                          />
-                        );
-                      })}
-                      <tr>
-                        <td>Total</td>
-                        <td>{(oldtotal = total)}</td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Card.Text>
-                {this.state.userType === "admin" && (
-                  <Button
-                    compact
-                    inverted
-                    variant="outline-light"
-                    color="white"
-                    onClick={() =>
-                      this.setState({ postId: ticket.id, modalI: true })
-                    }
-                  >
-                    Add item
-                  </Button>
+                      >
+                        Add item
+                      </Button>
+                    )}
+                    {this.state.userType === "admin" && (
+                      <Button
+                        compact
+                        inverted
+                        onClick={() =>
+                          this.setState({ postId: ticket.id, modalC: true })
+                        }
+                      >
+                        Close ticket
+                      </Button>
+                    )}
+                  </div>
                 )}
-                {this.state.userType === "admin" && (
-                  <Button
-                    compact
-                    inverted
-                    variant="outline-light"
-                    color="white"
-                    onClick={() =>
-                      this.setState({ postId: ticket.id, modalC: true })
-                    }
-                  >
-                    Close ticket
-                  </Button>
+
+                <Header as="h3">Comments</Header>
+                <Divider />
+                <Comment.Group threaded>
+                  {Object.entries(ticket.comments).map(([key, comment]) => {
+                    const commentKey = `comment-${key}`;
+                    return (
+                      <Fragment>
+                        {commentKey !== "comment-p" && (
+                          <Comment>
+                            <Comment.Avatar src={comment.avatar} />
+                            <Comment.Content>
+                              <Comment.Author as="a">
+                                {comment.name}
+                              </Comment.Author>
+                              <Comment.Metadata>
+                                {comment.email}
+                              </Comment.Metadata>
+                              <Comment.Text
+                                style={{ fontWeight: "light!important" }}
+                              >
+                                {comment.comment}
+                              </Comment.Text>
+                              <Comment.Metadata>
+                                Posted {moment(comment.timestamp).fromNow()}
+                              </Comment.Metadata>
+                            </Comment.Content>
+                          </Comment>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                  <Form reply onSubmit={this.handleComment}>
+                    <Form.TextArea
+                      placeholder="Write comment here"
+                      name="comment"
+                      onChange={this.handleChange}
+                      style={{ minHeight: 70, maxHeight: 110 }}
+                    />
+                    <Button
+                      content="Add Comment"
+                      labelPosition="left"
+                      icon="edit"
+                      primary
+                      size="tiny"
+                      onClick={() => this.setState({ postId: ticket.id })}
+                    />
+                  </Form>
+                </Comment.Group>
+
+                <Header as="h3">Files</Header>
+                <Divider />
+                {Object.keys(ticket.images).length === 1 && (
+                  <span>No files</span>
                 )}
-              </div>
-            )}
+                <List ordered>
+                  {Object.entries(ticket.images).map(([key, image]) => {
+                    const imageKey = `image-${key}`;
+                    return (
+                      <Fragment>
+                        {imageKey !== "image-t" && (
+                          <List.Item>
+                            <List.Content
+                              as="a"
+                              href={image.url}
+                              target="_blank"
+                            >
+                              {image.filename}
+                            </List.Content>
+                          </List.Item>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                </List>
 
-            <Button
-              compact
-              inverted
-              variant="outline-light"
-              color="white"
-              onClick={() => this.setState({ postId: ticket.id, modal: true })}
-            >
-              Upload file
-            </Button>
-            <Button
-              compact
-              inverted
-              variant="outline-light"
-              color="white"
-              onClick={() =>
-                this.setState({ postId: ticket.id, modalComm: true })
-              }
-            >
-              Add comment
-            </Button>
-            <Card.Text>
-              {Object.entries(ticket.images).map(([key, image]) => {
-                const imageKey = `image-${key}`;
-                return (
-                  <FileLink
-                    fileRef={image.url}
-                    fileName={image.filename}
-                    key={imageKey}
-                    ikey={imageKey}
-                  />
-                );
-              })}
-            </Card.Text>
+                <Button
+                  compact
+                  color="blue"
+                  labelPosition="left"
+                  size="small"
+                  content="Upload File"
+                  primary
+                  icon="file outline"
+                  onClick={() =>
+                    this.setState({ postId: ticket.id, modal: true })
+                  }
+                />
 
-            <FileModal
-              modal={this.state.modal}
-              closeModal={this.closeModal}
-              uploadFile={this.uploadFile}
-            />
-            <ProgressBar
-              uploadState={this.state.uploadState}
-              percentUploaded={this.state.percentUploaded}
-            />
-          </Card.Body>
-          <Card.Footer>
-            <small className="text-muted" id="whiteColor">
-              Posted {moment(ticket.timestamp).fromNow()}
-            </small>
-          </Card.Footer>
+                <FileModal
+                  modal={this.state.modal}
+                  closeModal={this.closeModal}
+                  uploadFile={this.uploadFile}
+                />
+                <ProgressBar
+                  uploadState={this.state.uploadState}
+                  percentUploaded={this.state.percentUploaded}
+                />
+              </Card.Header>
+              <Card.Footer>
+                <small className="text-muted">
+                  Posted {moment(ticket.timestamp).fromNow()}
+                </small>
+              </Card.Footer>
+            </Accordion.Content>
+          </Segment>
         </Card>
       </div>
     ));
@@ -669,9 +749,9 @@ class Ticket extends React.Component {
   isFormValid = ({ ticketName, ticketDetails, ticketSubject, value }) =>
     ticketName && ticketDetails && ticketSubject && value;
 
-  isItemValid = ({ itemName, itemCost }) => itemName && itemCost;
-
   isCommentValid = ({ comment }) => comment;
+
+  isItemValid = ({ itemName, itemCost }) => itemName && itemCost;
 
   openModalT = () => this.setState({ modalT: true });
 
@@ -693,10 +773,6 @@ class Ticket extends React.Component {
 
   closeModalC = () => this.setState({ modalC: false });
 
-  openModalComm = () => this.setState({ modalComm: true });
-
-  closeModalComm = () => this.setState({ modalComm: false });
-
   render() {
     const {
       tickets,
@@ -704,7 +780,6 @@ class Ticket extends React.Component {
       modalD,
       modalI,
       modalC,
-      modalComm,
       value,
       loading,
       searchLoading,
@@ -718,22 +793,24 @@ class Ticket extends React.Component {
         <center>
           <h2 style={{ color: "black", margin: "10px 0px" }}>Tickets</h2>
         </center>
-        <Header floated="right">
+        <div>
           <Input
             loading={searchLoading}
             onChange={this.handleSearchChange}
-            size="mini"
+            size="small"
             icon="search"
             name="searchTerm"
+            style={{ float: "right" }}
             placeholder="Search Tickets"
           />
-        </Header>
-        {userType === "user" && (
-          <Button primary onClick={this.openModalT}>
-            Create a Ticket &nbsp;&nbsp;
-            <Icon name="write" />
-          </Button>
-        )}
+
+          {userType === "user" && (
+            <Button primary onClick={this.openModalT}>
+              Create a Ticket &nbsp;&nbsp;
+              <Icon name="write" />
+            </Button>
+          )}
+        </div>
         <Modal basic open={modalT} onClose={this.closeModalT}>
           <Modal.Header>Create Ticket</Modal.Header>
           <Modal.Content>
@@ -819,30 +896,6 @@ class Ticket extends React.Component {
           </Modal.Actions>
         </Modal>
 
-        <Modal basic open={modalComm} onClose={this.closeModalComm}>
-          <Modal.Header>Add Comment</Modal.Header>
-          <Modal.Content>
-            <Form onSubmit={this.handleComment}>
-              <Form.Field>
-                <Input
-                  fluid
-                  label="comment"
-                  name="comment"
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-            </Form>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button color="green" inverted onClick={this.handleComment}>
-              <Icon name="checkmark" /> Add
-            </Button>
-            <Button color="red" inverted onClick={this.closeModalComm}>
-              <Icon name="remove" /> Cancel
-            </Button>
-          </Modal.Actions>
-        </Modal>
-
         <Modal basic open={modalD} onClose={this.closeModalD}>
           <Modal.Header>Delete Ticket? </Modal.Header>
 
@@ -868,15 +921,16 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-
         <div className="row justify-content-lg-center">
           {loading ? (
             <Spinner />
           ) : (
             <Fragment>
-              {searchTerm
-                ? this.displayTickets(searchResults)
-                : this.displayTickets(tickets)}
+              <Accordion fluid>
+                {searchTerm
+                  ? this.displayTickets(searchResults)
+                  : this.displayTickets(tickets)}
+              </Accordion>
             </Fragment>
           )}
         </div>

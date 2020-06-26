@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import { Table } from "semantic-ui-react";
 
 class ItemList extends React.Component {
   render() {
@@ -7,10 +8,10 @@ class ItemList extends React.Component {
     return (
       <Fragment>
         {ikey !== "item-i" && (
-          <tr style={{ color: "white" }}>
-            <td>{name}</td>
-            <td>{cost}</td>
-          </tr>
+          <Table.Row>
+            <Table.Cell>{name}</Table.Cell>
+            <Table.Cell>{cost}</Table.Cell>
+          </Table.Row>
         )}
       </Fragment>
     );

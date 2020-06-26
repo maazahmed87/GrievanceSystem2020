@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import firebase from "../firebase";
 import Ticket from "./Ticket";
@@ -124,7 +123,6 @@ class Main extends React.Component {
                 <li className="nav-item dropdown">
                   <a
                     className="nav-link dropdown-toggle"
-                    href="#"
                     id="navbarDropdown"
                     role="button"
                     data-toggle="dropdown"
@@ -141,15 +139,11 @@ class Main extends React.Component {
                     className="dropdown-menu dropdown-menu-right"
                     aria-labelledby="navbarDropdown"
                   >
-                    <a className="dropdown-item" href="#">
+                    <a className="dropdown-item">
                       Signed in as <strong>{currentUser.displayName}</strong>
                     </a>
                     <div className="dropdown-divider"></div>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={this.handleSignout}
-                    >
+                    <a className="dropdown-item" onClick={this.handleSignout}>
                       Logout
                     </a>
                   </div>
@@ -158,7 +152,7 @@ class Main extends React.Component {
             </div>
           </nav>
 
-          <div className="container-fluid">
+          <div className="container-fluid" id="main-pad">
             {active === "dashboard" && (
               <Dashboard
                 currentUser={currentUser}
