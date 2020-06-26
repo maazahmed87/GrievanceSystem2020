@@ -578,12 +578,16 @@ class Ticket extends React.Component {
                 >
                   {ticket.details}
                 </Card.Body>
-                <Divider />
+                <Divider hidden />
                 {ticket.category === "category 1" && (
                   <div style={{ paddingBottom: "10px" }}>
-                    <Header>Items</Header>
+                    <Header as="h3">Items</Header>
+                    <Divider />
                     {Object.keys(ticket.items).length === 1 && (
-                      <span>No items added</span>
+                      <Fragment>
+                        <span>No items added</span>
+                        <Divider hidden />
+                      </Fragment>
                     )}
                     <Card.Text>
                       {Object.keys(ticket.items).length > 1 && (
