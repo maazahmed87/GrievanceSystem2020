@@ -24,6 +24,7 @@ import {
   Header,
   Comment,
   Accordion,
+  Popup,
   List,
 } from "semantic-ui-react";
 import Spinner from "../Spinner";
@@ -494,25 +495,31 @@ class Ticket extends React.Component {
                 </Label>
                 <Icon name="dropdown" />
                 <strong>{ticket.name}</strong>
-                <Button
-                  icon="trash"
-                  data-toggle="tooltip"
-                  data-placement="top"
-                  title="Delete ticket"
-                  onClick={() => {
-                    this.setState({ modalD: true, deleteId: ticket.id });
-                  }}
-                  style={{
-                    float: "right",
-                    outline: "none!important",
-                    background: "transparent",
-                    border: "none",
-                  }}
+                <Popup
+                  content="Delete ticket"
+                  inverted
+                  size="tiny"
+                  position="top right"
+                  trigger={
+                    <Button
+                      icon="trash"
+                      onClick={() => {
+                        this.setState({ modalD: true, deleteId: ticket.id });
+                      }}
+                      style={{
+                        float: "right",
+                        outline: "none!important",
+                        background: "transparent",
+                        border: "none",
+                      }}
+                    />
+                  }
                 />
+
                 {this.state.activeIndex !== index && (
-                  <span style={{ float: "right" }}>
-                    <strong>Id: </strong>
-                    {ticket.timestamp}
+                  <span style={{ float: "right", marginRight: "20px" }}>
+                    <strong>ID: </strong>
+                    <span style={{ fontWeight: 500 }}>{ticket.timestamp}</span>
                   </span>
                 )}
               </Card.Title>
@@ -545,7 +552,6 @@ class Ticket extends React.Component {
                   <Label
                     size="small"
                     color={ticket.status !== "closed" ? "red" : "green"}
-                    basic
                   >
                     <span style={{ textTransform: "capitalize" }}>
                       {ticket.status}
@@ -569,11 +575,10 @@ class Ticket extends React.Component {
 
                 <Card.Body
                   style={{
-                    fontSize: "14px",
-                    color: "black",
+                    fontSize: "16px",
                     background: "white",
                     padding: "8px",
-                    borderRadius: "4px",
+                    borderRadius: "6px",
                   }}
                 >
                   {ticket.details}
