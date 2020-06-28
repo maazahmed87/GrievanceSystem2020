@@ -84,6 +84,7 @@ class Ticket extends React.Component {
     searchResults: [],
     itemName: "",
     itemCost: "",
+    itemId: "",
     activeIndex: 0,
     comment: "",
   };
@@ -376,6 +377,12 @@ class Ticket extends React.Component {
       });
   };
 
+  deleteItem = (itemId, ticketId) => {
+    let ref = this.state.ticketsRef;
+    ref.child(ticketId).child("items").child(itemId).remove();
+    this.addListeners();
+  };
+
   addComment = () => {
     const { comment, postId, ticketsRef, user } = this.state;
     const newComment = {
@@ -615,19 +622,24 @@ class Ticket extends React.Component {
                               }
                               return (
                                 <ItemList
+                                  itemCallBack={this.deleteItem}
                                   name={item.name}
                                   cost={item.cost}
-                                  key={itemKey}
+                                  ckey={ticket.id}
+                                  tkey={key}
                                   ikey={itemKey}
+                                  user={this.state.userType}
                                 />
                               );
                             })}
                           </Table.Body>
                           <Table.Footer>
                             <Table.Row>
-                              <Table.HeaderCell>Total</Table.HeaderCell>
                               <Table.HeaderCell>
-                                {(oldtotal = total)}
+                                <strong>Total</strong>
+                              </Table.HeaderCell>
+                              <Table.HeaderCell>
+                                <strong>{(oldtotal = total)}</strong>
                               </Table.HeaderCell>
                             </Table.Row>
                           </Table.Footer>
@@ -806,7 +818,11 @@ class Ticket extends React.Component {
         <center>
           <h2 style={{ color: "black", margin: "10px 0px" }}>Tickets</h2>
         </center>
-        <div>
+        <div
+          style={{
+            marginBottom: this.state.userType === "admin" ? "30px" : "0px",
+          }}
+        >
           <Input
             loading={searchLoading}
             onChange={this.handleSearchChange}

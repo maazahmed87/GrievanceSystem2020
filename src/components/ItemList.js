@@ -1,20 +1,40 @@
 import React, { Fragment } from "react";
-import { Table } from "semantic-ui-react";
+import { Table, Button, Popup } from "semantic-ui-react";
 
-class ItemList extends React.Component {
-  render() {
-    const { name, cost, ikey } = this.props;
+const ItemList = (props) => {
+  return (
+    <Fragment>
+      {props.ikey !== "item-i" && (
+        <Table.Row key={props.tkey}>
+          <Table.Cell>{props.name}</Table.Cell>
+          <Table.Cell>
+            {props.cost}
 
-    return (
-      <Fragment>
-        {ikey !== "item-i" && (
-          <Table.Row>
-            <Table.Cell>{name}</Table.Cell>
-            <Table.Cell>{cost}</Table.Cell>
-          </Table.Row>
-        )}
-      </Fragment>
-    );
-  }
-}
+            {props.user === "admin" && (
+              <Popup
+                content="Delete item"
+                inverted
+                size="tiny"
+                position="top right"
+                trigger={
+                  <Button
+                    icon="delete"
+                    onClick={() => props.itemCallBack(props.tkey, props.ckey)}
+                    style={{
+                      float: "right",
+                      outline: "none!important",
+                      background: "transparent",
+                      border: "none",
+                    }}
+                  />
+                }
+              />
+            )}
+          </Table.Cell>
+        </Table.Row>
+      )}
+    </Fragment>
+  );
+};
+
 export default ItemList;
