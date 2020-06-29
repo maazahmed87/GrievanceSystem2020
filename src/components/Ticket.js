@@ -841,7 +841,14 @@ class Ticket extends React.Component {
           )}
         </div>
         <Divider hidden />
-        <Modal basic open={modalT} onClose={this.closeModalT}>
+        <Modal
+          basic
+          dimmer="true"
+          size="tiny"
+          id="center-modal"
+          open={modalT}
+          onClose={this.closeModalT}
+        >
           <Modal.Header>Create Ticket</Modal.Header>
           <Modal.Content>
             <Form onSubmit={this.handleSubmit}>
@@ -892,30 +899,35 @@ class Ticket extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-        <Modal basic open={modalI} onClose={this.closeModalI}>
-          <Modal.Header>Add Item</Modal.Header>
-          <Modal.Content>
-            <Form onSubmit={this.handleItem}>
-              <Form.Field>
-                <Input
-                  fluid
-                  label="Item Name"
-                  name="itemName"
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
 
-              <Form.Field>
-                <Input
-                  fluid
-                  label="Item Cost"
-                  name="itemCost"
-                  onChange={this.handleChange}
-                />
-              </Form.Field>
-            </Form>
-          </Modal.Content>
+        <Modal
+          basic
+          dimmer="true"
+          size="tiny"
+          id="center-modal"
+          open={modalI}
+          onClose={this.closeModalI}
+        >
+          <Modal.Header>Add item</Modal.Header>
+          <Form onSubmit={this.handleItem}>
+            <Form.Field>
+              <Input
+                fluid
+                label="Item Name"
+                name="itemName"
+                onChange={this.handleChange}
+              />
+            </Form.Field>
 
+            <Form.Field>
+              <Input
+                fluid
+                label="Item Cost"
+                name="itemCost"
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+          </Form>
           <Modal.Actions>
             <Button color="green" inverted onClick={this.handleItem}>
               <Icon name="checkmark" /> Add
@@ -926,7 +938,14 @@ class Ticket extends React.Component {
           </Modal.Actions>
         </Modal>
 
-        <Modal basic open={modalD} onClose={this.closeModalD}>
+        <Modal
+          basic
+          dimmer="true"
+          size="tiny"
+          id="center-modal"
+          open={modalD}
+          onClose={this.closeModalD}
+        >
           <Modal.Header>Delete Ticket? </Modal.Header>
 
           <Modal.Actions>
@@ -939,10 +958,17 @@ class Ticket extends React.Component {
           </Modal.Actions>
         </Modal>
 
-        <Modal basic open={modalC} onClose={this.closeModalC}>
+        <Modal
+          basic
+          dimmer="true"
+          size="tiny"
+          id="center-modal"
+          open={modalC}
+          onClose={this.closeModalC}
+        >
           <Modal.Header>Close Ticket? </Modal.Header>
 
-          <Modal.Actions>
+          <Modal.Actions style={{ alignContent: "center" }}>
             <Button color="red" inverted onClick={this.handleCloseTicket}>
               <Icon name="trash" /> Close
             </Button>

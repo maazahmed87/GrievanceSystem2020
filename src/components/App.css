@@ -271,4 +271,19 @@ body,
   .white-back {
     padding: 0px 3px !important;
   }
+  #center-modal {
+    top: 30vh;
+  }
+}
+
+#center-modal {
+  height: auto;
+}
+
+@media (min-width: 450px) {
+  #center-modal {
+    position: absolute;
+    top: 30vh;
+    left: 50vh;
+  }
 }
