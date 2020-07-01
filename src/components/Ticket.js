@@ -537,7 +537,9 @@ class Ticket extends React.Component {
                 />
                 {this.state.userType === "admin" && (
                   <Popup
-                    content="Flag ticket"
+                    content={
+                      ticket.flag === "true" ? "Unflag ticket" : "Flag ticket"
+                    }
                     inverted
                     size="tiny"
                     position="top right"
