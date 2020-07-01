@@ -454,11 +454,13 @@ class Ticket extends React.Component {
     this.addListeners();
   };
 
-  handleFlag = () => {
-    let ticket_id = this.state.flagId;
+  handleFlag = (id, flag) => {
     let ref = this.state.ticketsRef;
-    ref.child(ticket_id).update({ flag: "true" });
-    this.closeModalF();
+    if (flag === "true") {
+      ref.child(id).update({ flag: "false" });
+    } else {
+      ref.child(id).update({ flag: "true" });
+    }
     this.addListeners();
   };
 
@@ -540,15 +542,15 @@ class Ticket extends React.Component {
                     size="tiny"
                     position="top right"
                     trigger={
-                      <Button
-                        icon="flag"
+                      <Icon
+                        name="flag"
+                        color={ticket.flag === "true" ? "yellow" : "black"}
                         onClick={() => {
-                          this.setState({ modalF: true, flagId: ticket.id });
+                          this.handleFlag(ticket.id, ticket.flag);
                         }}
                         style={{
                           float: "right",
                           outline: "none!important",
-                          background: "transparent",
                           border: "none",
                         }}
                       />
@@ -883,7 +885,7 @@ class Ticket extends React.Component {
           basic
           dimmer="true"
           size="tiny"
-          id="center-modal"
+          id="center-modal-create"
           open={modalT}
           onClose={this.closeModalT}
         >
@@ -991,26 +993,6 @@ class Ticket extends React.Component {
               <Icon name="trash" /> Delete
             </Button>
             <Button color="green" inverted onClick={this.closeModalD}>
-              <Icon name="remove" /> Cancel
-            </Button>
-          </Modal.Actions>
-        </Modal>
-
-        <Modal
-          basic
-          dimmer="true"
-          size="tiny"
-          id="center-modal"
-          open={modalF}
-          onClose={this.closeModalF}
-        >
-          <Modal.Header>Flag Ticket? </Modal.Header>
-
-          <Modal.Actions>
-            <Button color="red" inverted onClick={this.handleFlag}>
-              <Icon name="trash" /> Flag
-            </Button>
-            <Button color="green" inverted onClick={this.closeModalF}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
