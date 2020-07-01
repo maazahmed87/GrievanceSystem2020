@@ -42,7 +42,7 @@ class Dashboard extends React.Component {
       datasets: [
         {
           data: [],
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+          backgroundColor: ["#FF6384", "#36A2EB", "#FF9F40"],
         },
       ],
       title: "Tickets category chart",
@@ -60,6 +60,20 @@ class Dashboard extends React.Component {
         },
       ],
       title: "Status Pie Chart",
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    },
+    chart3: {
+      labels: ["Flagged", "Not Flagged"],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: ["#FF483A", "#1D81A2"],
+        },
+      ],
+      title: "Flagged Pie chart",
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -165,6 +179,7 @@ class Dashboard extends React.Component {
           loadedPendingCount++;
         }
       }
+
       let completedCount = loadedTickets.length - loadedPendingCount;
 
       let countArray = [c1, c2, c3];
@@ -197,20 +212,32 @@ class Dashboard extends React.Component {
   loadAdminTickets = () => {
     let domain = this.state.domain;
     let loadedPendingCount = 0;
+    let loadedFlagCount = 0;
+    let loadedUnFlagCount = 0;
     let loadedTickets = [];
+
     this.state.ticketsRef.on("child_added", (snap) => {
       if (domain === snap.val().category) {
         loadedTickets.push(snap.val());
         if (snap.val().status === "pending") {
           loadedPendingCount++;
         }
+        if (snap.val().flag === "true") {
+          loadedFlagCount++;
+        } else {
+          loadedUnFlagCount++;
+        }
       }
     });
-    console.log(loadedTickets);
     let completedCount = loadedTickets.length - loadedPendingCount;
+    let flagArray = [loadedFlagCount, loadedUnFlagCount];
     let statusArray = [loadedPendingCount, completedCount];
+
     let statusDataset = this.state.chart2.datasets.slice(0);
     statusDataset[0].data = statusArray;
+
+    let flagDataset = this.state.chart3.datasets.slice(0);
+    flagDataset[0].data = flagArray;
 
     this.setState({
       chart: Object.assign({}, this.state.data, {
@@ -233,6 +260,7 @@ class Dashboard extends React.Component {
       closedCount,
       chart1,
       chart2,
+      chart3,
     } = this.state;
 
     return (
@@ -343,6 +371,23 @@ class Dashboard extends React.Component {
                 </h2>
                 <Doughnut data={chart2} />
               </Col>
+
+              {this.state.userType === "admin" && (
+                <Col
+                  sm={6}
+                  style={{
+                    textAlign: "center",
+                    paddingBottom: "15px",
+                    border: "1px solid #dfdfdf",
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <h2 style={{ color: "black" }}>
+                    Tickets flagged Distribution
+                  </h2>
+                  <Pie data={chart3} />
+                </Col>
+              )}
             </Row>
           </Fragment>
         )}

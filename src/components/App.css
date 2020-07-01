@@ -286,4 +286,10 @@ body,
     top: 30vh;
     left: 50vh;
   }
+
+  #center-modal-create {
+    position: absolute;
+    top: 15vh;
+    left: 50vh;
+  }
 }
