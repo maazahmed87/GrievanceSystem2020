@@ -61,6 +61,7 @@ class Ticket extends React.Component {
     modal: false,
     modelI: false,
     modalC: false,
+    modalF: false,
     value: "",
     colorValues: [
       "primary",
@@ -79,6 +80,7 @@ class Ticket extends React.Component {
     message: "",
     errors: [],
     deleteId: "",
+    flagId: "",
     searchTerm: this.props.term,
     searchLoading: false,
     searchResults: [],
@@ -328,6 +330,7 @@ class Ticket extends React.Component {
       images: { t: "" },
       items: { j: "" },
       comments: { p: "" },
+      flag: "false",
       createdBy: {
         name: user.displayName,
         email: user.email,
@@ -451,6 +454,14 @@ class Ticket extends React.Component {
     this.addListeners();
   };
 
+  handleFlag = () => {
+    let ticket_id = this.state.flagId;
+    let ref = this.state.ticketsRef;
+    ref.child(ticket_id).update({ flag: "true" });
+    this.closeModalF();
+    this.addListeners();
+  };
+
   handleCloseTicket = () => {
     let ticket_id = this.state.postId;
     let ref = this.state.ticketsRef;
@@ -522,6 +533,28 @@ class Ticket extends React.Component {
                     />
                   }
                 />
+                {this.state.userType === "admin" && (
+                  <Popup
+                    content="Flag ticket"
+                    inverted
+                    size="tiny"
+                    position="top right"
+                    trigger={
+                      <Button
+                        icon="flag"
+                        onClick={() => {
+                          this.setState({ modalF: true, flagId: ticket.id });
+                        }}
+                        style={{
+                          float: "right",
+                          outline: "none!important",
+                          background: "transparent",
+                          border: "none",
+                        }}
+                      />
+                    }
+                  />
+                )}
 
                 {this.state.activeIndex !== index && (
                   <span style={{ float: "right", marginRight: "20px" }}>
@@ -798,6 +831,10 @@ class Ticket extends React.Component {
 
   closeModalC = () => this.setState({ modalC: false });
 
+  openModalF = () => this.setState({ modalF: true });
+
+  closeModalF = () => this.setState({ modalF: false });
+
   render() {
     const {
       tickets,
@@ -805,6 +842,7 @@ class Ticket extends React.Component {
       modalD,
       modalI,
       modalC,
+      modalF,
       value,
       loading,
       searchLoading,
@@ -953,6 +991,26 @@ class Ticket extends React.Component {
               <Icon name="trash" /> Delete
             </Button>
             <Button color="green" inverted onClick={this.closeModalD}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
+
+        <Modal
+          basic
+          dimmer="true"
+          size="tiny"
+          id="center-modal"
+          open={modalF}
+          onClose={this.closeModalF}
+        >
+          <Modal.Header>Flag Ticket? </Modal.Header>
+
+          <Modal.Actions>
+            <Button color="red" inverted onClick={this.handleFlag}>
+              <Icon name="trash" /> Flag
+            </Button>
+            <Button color="green" inverted onClick={this.closeModalF}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
