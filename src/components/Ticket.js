@@ -707,20 +707,27 @@ class Ticket extends React.Component {
                 <Header as="h3">Comments</Header>
                 <Divider />
                 <Comment.Group threaded>
+                  {Object.keys(ticket.comments).length === 1 && (
+                    <Fragment>
+                      <span>No comments yet</span>
+                      <Divider hidden />
+                    </Fragment>
+                  )}
                   {Object.entries(ticket.comments).map(([key, comment]) => {
                     const commentKey = `comment-${key}`;
-                    return ( 
+                    return (
                       <CommentList
-                                  commentCallBack={this.deleteComment}
-                                  comment={comment.comment}
-                                  name={comment.name}
-                                  ckey={ticket.id}
-                                  tkey={key}
-                                  email={comment.email}
-                                  avatar={comment.avatar}
-                                  timestamp={comment.timestamp}
-                                  user={this.state.userType}
-                                />
+                        commentCallBack={this.deleteComment}
+                        comment={comment.comment}
+                        name={comment.name}
+                        ikey={commentKey}
+                        ckey={key}
+                        tkey={ticket.id}
+                        email={comment.email}
+                        avatar={comment.avatar}
+                        timestamp={comment.timestamp}
+                        user={this.state.user.email}
+                      />
                     );
                   })}
                   <Form reply onSubmit={this.handleComment}>

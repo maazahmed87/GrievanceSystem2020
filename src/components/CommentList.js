@@ -5,7 +5,7 @@ import moment from "moment";
 const CommentList = (props) => {
   return (
     <Fragment>
-      {props.ckey !== "comment-p" && (
+      {props.ikey !== "comment-p" && (
         <Comment>
           <Comment.Avatar src={props.avatar} />
           <Comment.Content>
@@ -15,28 +15,30 @@ const CommentList = (props) => {
               {props.comment}
             </Comment.Text>
             <Comment.Metadata>
+              {props.user === props.email && (
+                <Popup
+                  content="Delete Comment"
+                  inverted
+                  size="tiny"
+                  position="top right"
+                  trigger={
+                    <Comment.Actions>
+                      <Comment.Action
+                        onClick={() =>
+                          props.commentCallBack(props.ckey, props.tkey)
+                        }
+                      >
+                        Delete{" "}
+                        <span style={{ fontWeight: "bolder ", color: "black" }}>
+                          |
+                        </span>
+                      </Comment.Action>
+                    </Comment.Actions>
+                  }
+                />
+              )}
+              {"  "}
               Posted {moment(props.timestamp).fromNow()}
-              <br />
-              <Popup
-                content="Delete item"
-                inverted
-                size="tiny"
-                position="top right"
-                trigger={
-                  <Button
-                    icon="delete"
-                    onClick={() =>
-                      props.commentCallBack(props.tkey, props.ckey)
-                    }
-                    style={{
-                      float: "right",
-                      outline: "none!important",
-                      background: "transparent",
-                      border: "none",
-                    }}
-                  />
-                }
-              />
             </Comment.Metadata>
           </Comment.Content>
         </Comment>
