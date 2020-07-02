@@ -385,6 +385,11 @@ class Ticket extends React.Component {
     ref.child(ticketId).child("items").child(itemId).remove();
     this.addListeners();
   };
+  deleteComment = (commentId, ticketId) => {
+    let ref = this.state.ticketsRef;
+    ref.child(ticketId).child("comments").child(commentId).remove();
+    this.addListeners();
+  };
 
   addComment = () => {
     const { comment, postId, ticketsRef, user } = this.state;
@@ -704,30 +709,18 @@ class Ticket extends React.Component {
                 <Comment.Group threaded>
                   {Object.entries(ticket.comments).map(([key, comment]) => {
                     const commentKey = `comment-${key}`;
-                    return (
-                      <Fragment>
-                        {commentKey !== "comment-p" && (
-                          <Comment>
-                            <Comment.Avatar src={comment.avatar} />
-                            <Comment.Content>
-                              <Comment.Author as="a">
-                                {comment.name}
-                              </Comment.Author>
-                              <Comment.Metadata>
-                                {comment.email}
-                              </Comment.Metadata>
-                              <Comment.Text
-                                style={{ fontWeight: "light!important" }}
-                              >
-                                {comment.comment}
-                              </Comment.Text>
-                              <Comment.Metadata>
-                                Posted {moment(comment.timestamp).fromNow()}
-                              </Comment.Metadata>
-                            </Comment.Content>
-                          </Comment>
-                        )}
-                      </Fragment>
+                    return ( 
+                      <CommentList
+                                  commentCallBack={this.deleteComment}
+                                  comment={comment.comment}
+                                  name={comment.name}
+                                  ckey={ticket.id}
+                                  tkey={key}
+                                  email={comment.email}
+                                  avatar={comment.avatar}
+                                  timestamp={comment.timestamp}
+                                  user={this.state.userType}
+                                />
                     );
                   })}
                   <Form reply onSubmit={this.handleComment}>
