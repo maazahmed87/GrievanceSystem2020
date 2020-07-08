@@ -239,7 +239,7 @@ class MessageForm extends React.Component {
             onClick={this.sendMessage}
             disabled={loading}
             color="orange"
-            content="Add Reply"
+            content="Send"
             labelPosition="left"
             icon="edit"
           />

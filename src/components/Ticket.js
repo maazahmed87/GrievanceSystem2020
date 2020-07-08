@@ -61,6 +61,7 @@ class Ticket extends React.Component {
     modal: false,
     modelI: false,
     modalC: false,
+    modalO: false,
     modalF: false,
     value: "",
     colorValues: [
@@ -298,6 +299,10 @@ class Ticket extends React.Component {
         this.state.userType === "user" &&
         user.email === snap.val().createdBy.email
       ) {
+        var date = new Date(snap.val().timestamp);
+        var str = date.toString();
+        var res = str.split(" ");
+        console.log(res[1]);
         loadedTickets.push(snap.val());
       }
 
@@ -477,6 +482,14 @@ class Ticket extends React.Component {
     this.addListeners();
   };
 
+  handleOpenTicket = () => {
+    let ticket_id = this.state.postId;
+    let ref = this.state.ticketsRef;
+    ref.child(ticket_id).update({ status: "pending" });
+    this.closeModalO();
+    this.addListeners();
+  };
+
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -607,19 +620,37 @@ class Ticket extends React.Component {
                     </span>
                   </Label>
                 </Card.Subtitle>
-                {this.state.userType === "admin" && (
-                  <Button
-                    compact
-                    content="Close ticket"
-                    labelPosition="left"
-                    size="small"
-                    icon="close"
-                    primary
-                    onClick={() =>
-                      this.setState({ postId: ticket.id, modalC: true })
-                    }
-                  />
-                )}
+
+                {ticket.status === "closed" &&
+                  this.state.userType === "admin" && (
+                    <Button
+                      compact
+                      content="Open ticket"
+                      labelPosition="left"
+                      size="small"
+                      icon="lock"
+                      primary
+                      onClick={() =>
+                        this.setState({ postId: ticket.id, modalO: true })
+                      }
+                    />
+                  )}
+
+                {ticket.status === "pending" &&
+                  this.state.userType === "admin" && (
+                    <Button
+                      compact
+                      content="Close ticket"
+                      labelPosition="left"
+                      size="small"
+                      icon="lock"
+                      primary
+                      onClick={() =>
+                        this.setState({ postId: ticket.id, modalC: true })
+                      }
+                    />
+                  )}
+
                 <Divider horizontal />
 
                 <Card.Body
@@ -801,6 +832,10 @@ class Ticket extends React.Component {
                 <small className="text-muted">
                   Posted {moment(ticket.timestamp).fromNow()}
                 </small>
+                <span style={{ color: "black" }}> |</span>{" "}
+                <small className="text-muted">
+                  {moment(ticket.timestamp).format("MMMM Do YYYY, h:mma")}
+                </small>
               </Card.Footer>
             </Accordion.Content>
           </Segment>
@@ -835,6 +870,10 @@ class Ticket extends React.Component {
 
   closeModalC = () => this.setState({ modalC: false });
 
+  openModalO = () => this.setState({ modalO: true });
+
+  closeModalO = () => this.setState({ modalO: false });
+
   openModalF = () => this.setState({ modalF: true });
 
   closeModalF = () => this.setState({ modalF: false });
@@ -846,6 +885,7 @@ class Ticket extends React.Component {
       modalD,
       modalI,
       modalC,
+      modalO,
       modalF,
       value,
       loading,
@@ -1015,6 +1055,26 @@ class Ticket extends React.Component {
               <Icon name="trash" /> Close
             </Button>
             <Button color="green" inverted onClick={this.closeModalC}>
+              <Icon name="remove" /> Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>
+
+        <Modal
+          basic
+          dimmer="true"
+          size="tiny"
+          id="center-modal"
+          open={modalO}
+          onClose={this.closeModalO}
+        >
+          <Modal.Header>Open Ticket? </Modal.Header>
+
+          <Modal.Actions style={{ alignContent: "center" }}>
+            <Button color="green" inverted onClick={this.handleOpenTicket}>
+              <Icon name="checkmark" /> Open
+            </Button>
+            <Button color="red" inverted onClick={this.closeModalO}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
