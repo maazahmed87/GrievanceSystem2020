@@ -38,7 +38,7 @@ class Dashboard extends React.Component {
     message: "",
     errors: [],
     chart1: {
-      labels: ["Category1", "Category 2", "Category 3"],
+      labels: ["Maintenance", "Electrical and Plumbing", "Other grievances"],
       datasets: [
         {
           data: [],
@@ -163,15 +163,15 @@ class Dashboard extends React.Component {
         user.email === snap.val().createdBy.email
       ) {
         loadedTickets.push(snap.val());
-        if ("category 1" === snap.val().category) {
+        if ("maintenance" === snap.val().category) {
           loadedCat1Tickets.push(snap.val());
           c1++;
         }
-        if ("category 2" === snap.val().category) {
+        if ("electrical_plumbing" === snap.val().category) {
           loadedCat2Tickets.push(snap.val());
           c2++;
         }
-        if ("category 3" === snap.val().category) {
+        if ("other" === snap.val().category) {
           loadedCat3Tickets.push(snap.val());
           c3 = c3 + 1;
         }
@@ -287,7 +287,7 @@ class Dashboard extends React.Component {
                     textAlign: "center",
                   }}
                 >
-                  <Card.Header as="h5">Total Tickets</Card.Header>
+                  <Card.Header as="h5">Total Complaints</Card.Header>
                   <Card.Body>
                     <div style={{ fontSize: "62px", marginTop: "10%" }}>
                       {tickets.length}
@@ -309,7 +309,7 @@ class Dashboard extends React.Component {
                     textAlign: "center",
                   }}
                 >
-                  <Card.Header as="h5">Pending Tickets</Card.Header>
+                  <Card.Header as="h5">Pending Complaints</Card.Header>
                   <Card.Body>
                     <div style={{ fontSize: "62px", marginTop: "10%" }}>
                       {pendingCount}
@@ -331,7 +331,7 @@ class Dashboard extends React.Component {
                     textAlign: "center",
                   }}
                 >
-                  <Card.Header as="h5">Completed Tickets</Card.Header>
+                  <Card.Header as="h5">Closed Complaints</Card.Header>
                   <Card.Body>
                     <div style={{ fontSize: "62px", marginTop: "10%" }}>
                       {closedCount}
@@ -351,7 +351,7 @@ class Dashboard extends React.Component {
                   }}
                 >
                   <h2 style={{ color: "black" }}>
-                    Category wise ticket Distribution
+                    Category wise complaint Distribution
                   </h2>
                   <Pie data={chart1} />
                 </Col>
@@ -367,7 +367,7 @@ class Dashboard extends React.Component {
                 }}
               >
                 <h2 style={{ color: "black" }}>
-                  Status wise ticket Distribution
+                  Status wise complaint Distribution
                 </h2>
                 <Doughnut data={chart2} />
               </Col>
@@ -383,7 +383,7 @@ class Dashboard extends React.Component {
                   }}
                 >
                   <h2 style={{ color: "black" }}>
-                    Tickets flagged Distribution
+                    Complaints flagged Distribution
                   </h2>
                   <Pie data={chart3} />
                 </Col>

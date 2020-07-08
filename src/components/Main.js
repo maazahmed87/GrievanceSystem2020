@@ -76,7 +76,7 @@ class Main extends React.Component {
               id={active === "tickets" ? "selected" : ""}
               onClick={() => this.setState({ active: "tickets", search: "" })}
             >
-              Tickets
+              Complaints
             </a>
             <a
               id={active === "chat" ? "selected" : ""}

@@ -35,9 +35,9 @@ import CommentList from "./CommentList";
 import "./App.css";
 
 const options = [
-  { key: 1, text: "Category 1", value: "category 1" },
-  { key: 2, text: "Category 2", value: "category 2" },
-  { key: 3, text: "Category 3", value: "category 3" },
+  { key: 1, text: "Maintenance", value: "maintenance" },
+  { key: 2, text: "Electrical and Plumbing", value: "electrical_plumbing" },
+  { key: 3, text: "Other grievances", value: "other" },
 ];
 
 class Ticket extends React.Component {
@@ -534,7 +534,7 @@ class Ticket extends React.Component {
                 <Icon name="dropdown" />
                 <strong>{ticket.name}</strong>
                 <Popup
-                  content="Delete ticket"
+                  content="Delete complaint"
                   inverted
                   size="tiny"
                   position="top right"
@@ -556,7 +556,9 @@ class Ticket extends React.Component {
                 {this.state.userType === "admin" && (
                   <Popup
                     content={
-                      ticket.flag === "true" ? "Unflag ticket" : "Flag ticket"
+                      ticket.flag === "true"
+                        ? "Unflag complaint"
+                        : "Flag complaint"
                     }
                     inverted
                     size="tiny"
@@ -604,7 +606,10 @@ class Ticket extends React.Component {
                   {ticket.subject}
                 </Card.Title>
 
-                <Card.Title id="font-size-sub ">
+                <Card.Title
+                  id="font-size-sub "
+                  style={{ textTransform: "capitalize" }}
+                >
                   <strong>Category: </strong>
                   {ticket.category}
                 </Card.Title>
@@ -625,10 +630,10 @@ class Ticket extends React.Component {
                   this.state.userType === "admin" && (
                     <Button
                       compact
-                      content="Open ticket"
+                      content="Open complaint"
                       labelPosition="left"
                       size="small"
-                      icon="lock"
+                      icon="unlock"
                       primary
                       onClick={() =>
                         this.setState({ postId: ticket.id, modalO: true })
@@ -640,7 +645,7 @@ class Ticket extends React.Component {
                   this.state.userType === "admin" && (
                     <Button
                       compact
-                      content="Close ticket"
+                      content="Close complaint"
                       labelPosition="left"
                       size="small"
                       icon="lock"
@@ -898,7 +903,7 @@ class Ticket extends React.Component {
     return (
       <Container className="white-back">
         <center>
-          <h2 style={{ color: "black", margin: "10px 0px" }}>Tickets</h2>
+          <h2 style={{ color: "black", margin: "10px 0px" }}>Complaints</h2>
         </center>
         <div
           style={{
@@ -912,12 +917,12 @@ class Ticket extends React.Component {
             icon="search"
             name="searchTerm"
             style={{ float: "right" }}
-            placeholder="Search Tickets"
+            placeholder="Search Complaints"
           />
 
           {userType === "user" && (
             <Button primary onClick={this.openModalT}>
-              Create a Ticket &nbsp;&nbsp;
+              Create a Complaint Ticket &nbsp;&nbsp;
               <Icon name="write" />
             </Button>
           )}
@@ -1028,7 +1033,7 @@ class Ticket extends React.Component {
           open={modalD}
           onClose={this.closeModalD}
         >
-          <Modal.Header>Delete Ticket? </Modal.Header>
+          <Modal.Header>Delete Complaint? </Modal.Header>
 
           <Modal.Actions>
             <Button color="red" inverted onClick={this.handleDelete}>
@@ -1048,13 +1053,13 @@ class Ticket extends React.Component {
           open={modalC}
           onClose={this.closeModalC}
         >
-          <Modal.Header>Close Ticket? </Modal.Header>
+          <Modal.Header>Close Complaint? </Modal.Header>
 
           <Modal.Actions style={{ alignContent: "center" }}>
-            <Button color="red" inverted onClick={this.handleCloseTicket}>
-              <Icon name="trash" /> Close
+            <Button color="green" inverted onClick={this.handleCloseTicket}>
+              <Icon name="lock" /> Close
             </Button>
-            <Button color="green" inverted onClick={this.closeModalC}>
+            <Button color="red" inverted onClick={this.closeModalC}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
@@ -1068,13 +1073,13 @@ class Ticket extends React.Component {
           open={modalO}
           onClose={this.closeModalO}
         >
-          <Modal.Header>Open Ticket? </Modal.Header>
+          <Modal.Header>Open Complaint </Modal.Header>
 
           <Modal.Actions style={{ alignContent: "center" }}>
-            <Button color="green" inverted onClick={this.handleOpenTicket}>
-              <Icon name="checkmark" /> Open
+            <Button color="red" inverted onClick={this.handleOpenTicket}>
+              <Icon name="unlock" /> Open
             </Button>
-            <Button color="red" inverted onClick={this.closeModalO}>
+            <Button color="green" inverted onClick={this.closeModalO}>
               <Icon name="remove" /> Cancel
             </Button>
           </Modal.Actions>
