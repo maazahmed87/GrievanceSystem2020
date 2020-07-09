@@ -5,6 +5,7 @@ import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import Landing from "./components/Landing";
 import Spinner from "./Spinner";
+import Reset from "./components/Auth/Reset";
 import registerServiceWorker from "./registerServiceWorker";
 import firebase from "./firebase";
 
@@ -48,6 +49,7 @@ class Root extends React.Component {
         <Route exact path="/dashboard" component={App} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+        <Route path="/password/reset" component={Reset} />
       </Switch>
     );
   }

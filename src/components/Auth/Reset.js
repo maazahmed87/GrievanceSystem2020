@@ -6,17 +6,24 @@ import {
   Segment,
   Button,
   Header,
+  Icon,
   Message,
-  Divider,
 } from "semantic-ui-react";
-import { Link } from "react-router-dom";
 
-class Login extends React.Component {
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  withRouter,
+} from "react-router-dom";
+
+class Reset extends React.Component {
   state = {
     email: "",
-    password: "",
     errors: [],
     loading: false,
+    display: false,
   };
 
   displayErrors = (errors) =>
@@ -26,15 +33,21 @@ class Login extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleSubmit = (event) => {
+  changeRoute = () => {
+    this.props.history.push("/login");
+  };
+
+  handleReset = (event) => {
     event.preventDefault();
     if (this.isFormValid(this.state)) {
       this.setState({ errors: [], loading: true });
       firebase
         .auth()
-        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .sendPasswordResetEmail(this.state.email)
         .then((signedInUser) => {
-          console.log(signedInUser);
+          this.setState({ loading: false, display: true });
+          console.log("Email sent");
+          setTimeout(() => this.setState({ display: false, email: "" }), 10000);
         })
         .catch((err) => {
           console.error(err);
@@ -46,7 +59,7 @@ class Login extends React.Component {
     }
   };
 
-  isFormValid = ({ email, password }) => email && password;
+  isFormValid = ({ email }) => email;
 
   handleInputError = (errors, inputName) => {
     return errors.some((error) =>
@@ -57,16 +70,23 @@ class Login extends React.Component {
   };
 
   render() {
-    const { email, password, errors, loading } = this.state;
+    const { email, errors, loading, display } = this.state;
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h1" icon color="blue" textAlign="center">
-            Login
+          <Header as="h1" color="blue" textAlign="center" size="large" icon>
+            <Icon name="repeat" />
+            Reset password
           </Header>
-          <Form onSubmit={this.handleSubmit} size="large">
+          <Form onSubmit={this.handleReset} size="large">
             <Segment stacked>
+              <Message>
+                <p>
+                  Enter your email and we'll send you a link to reset your
+                  password
+                </p>
+              </Message>
               <Form.Input
                 fluid
                 name="email"
@@ -78,17 +98,6 @@ class Login extends React.Component {
                 className={this.handleInputError(errors, "email")}
                 type="email"
               />
-              <Form.Input
-                fluid
-                name="password"
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                onChange={this.handleChange}
-                value={password}
-                className={this.handleInputError(errors, "password")}
-                type="password"
-              />
               <Button
                 disabled={loading}
                 className={loading ? "loading" : ""}
@@ -96,11 +105,12 @@ class Login extends React.Component {
                 fluid
                 size="large"
               >
-                Submit
+                Reset password <Icon name="arrow right" />
               </Button>
-              <Divider />
-              <Link to="/password/reset">Forgot password? </Link>
             </Segment>
+            <Button basic attached="bottom" onClick={this.changeRoute}>
+              Back to login
+            </Button>
           </Form>
           {errors.length > 0 && (
             <Message error>
@@ -108,13 +118,19 @@ class Login extends React.Component {
               {this.displayErrors(errors)}
             </Message>
           )}
-          <Message>
-            Don't have an account? <Link to="/register">Register</Link>
-          </Message>
+          {display && (
+            <Message positive>
+              <Message.Header>Email has been sent to {email}</Message.Header>
+              <p>
+                Check your <b>email</b> to follow the link to reset your
+                password.
+              </p>
+            </Message>
+          )}
         </Grid.Column>
       </Grid>
     );
   }
 }
 
-export default Login;
+export default Reset;
