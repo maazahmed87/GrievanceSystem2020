@@ -79,6 +79,20 @@ class Dashboard extends React.Component {
         maintainAspectRatio: false,
       },
     },
+    chart4: {
+      labels: ["Faculty", "Student"],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: ["#ff6361", "#58508d"],
+        },
+      ],
+      title: "Ticket distribution among users",
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    },
   };
 
   componentDidMount() {
@@ -214,6 +228,8 @@ class Dashboard extends React.Component {
     let loadedPendingCount = 0;
     let loadedFlagCount = 0;
     let loadedUnFlagCount = 0;
+    let facultyCount = 0;
+    let studentCount = 0;
     let loadedTickets = [];
 
     this.state.ticketsRef.on("child_added", (snap) => {
@@ -227,17 +243,28 @@ class Dashboard extends React.Component {
         } else {
           loadedUnFlagCount++;
         }
+        if (snap.val().createdBy.faculty) {
+          facultyCount++;
+        } else {
+          studentCount++;
+        }
       }
     });
     let completedCount = loadedTickets.length - loadedPendingCount;
     let flagArray = [loadedFlagCount, loadedUnFlagCount];
     let statusArray = [loadedPendingCount, completedCount];
+    let facultyArray = [facultyCount, studentCount];
+
+    console.log(studentCount);
 
     let statusDataset = this.state.chart2.datasets.slice(0);
     statusDataset[0].data = statusArray;
 
     let flagDataset = this.state.chart3.datasets.slice(0);
     flagDataset[0].data = flagArray;
+
+    let facultyDataset = this.state.chart4.datasets.slice(0);
+    facultyDataset[0].data = facultyArray;
 
     this.setState({
       chart: Object.assign({}, this.state.data, {
@@ -261,6 +288,7 @@ class Dashboard extends React.Component {
       chart1,
       chart2,
       chart3,
+      chart4,
     } = this.state;
 
     return (
@@ -386,6 +414,23 @@ class Dashboard extends React.Component {
                     Complaints flagged Distribution
                   </h2>
                   <Pie data={chart3} />
+                </Col>
+              )}
+
+              {this.state.userType === "admin" && (
+                <Col
+                  sm={6}
+                  style={{
+                    textAlign: "center",
+                    paddingBottom: "15px",
+                    border: "1px solid #dfdfdf",
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <h2 style={{ color: "black" }}>
+                    Complaints flagged Distribution
+                  </h2>
+                  <Pie data={chart4} />
                 </Col>
               )}
             </Row>

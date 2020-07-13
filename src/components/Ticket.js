@@ -281,6 +281,13 @@ class Ticket extends React.Component {
           this.setState({ userType: "user" });
           console.log(snap.val().type);
         }
+        if (snap.val().faculty) {
+          this.setState({ faculty: true });
+          console.log(snap.val().faculty);
+        } else {
+          this.setState({ faculty: false });
+          console.log(snap.val().faculty);
+        }
       }
     });
     this.getTickets();
@@ -339,6 +346,7 @@ class Ticket extends React.Component {
       createdBy: {
         name: user.displayName,
         email: user.email,
+        faculty: this.state.faculty,
       },
     };
 
@@ -533,26 +541,28 @@ class Ticket extends React.Component {
                 </Label>
                 <Icon name="dropdown" />
                 <strong>{ticket.name}</strong>
-                <Popup
-                  content="Delete complaint"
-                  inverted
-                  size="tiny"
-                  position="top right"
-                  trigger={
-                    <Button
-                      icon="trash"
-                      onClick={() => {
-                        this.setState({ modalD: true, deleteId: ticket.id });
-                      }}
-                      style={{
-                        float: "right",
-                        outline: "none!important",
-                        background: "transparent",
-                        border: "none",
-                      }}
-                    />
-                  }
-                />
+                {this.state.user.email === ticket.createdBy.email && (
+                  <Popup
+                    content="Delete complaint"
+                    inverted
+                    size="tiny"
+                    position="top right"
+                    trigger={
+                      <Button
+                        icon="trash"
+                        onClick={() => {
+                          this.setState({ modalD: true, deleteId: ticket.id });
+                        }}
+                        style={{
+                          float: "right",
+                          outline: "none!important",
+                          background: "transparent",
+                          border: "none",
+                        }}
+                      />
+                    }
+                  />
+                )}
                 {this.state.userType === "admin" && (
                   <Popup
                     content={
@@ -584,6 +594,12 @@ class Ticket extends React.Component {
                   <span style={{ float: "right", marginRight: "20px" }}>
                     <strong>ID: </strong>
                     <span style={{ fontWeight: 500 }}>{ticket.timestamp}</span>
+                    {this.state.userType === "admin" && (
+                      <strong>
+                        {" "}
+                        | {ticket.createdBy.faculty ? "Faculty" : "Student"}
+                      </strong>
+                    )}
                   </span>
                 )}
               </Card.Title>
@@ -662,8 +678,11 @@ class Ticket extends React.Component {
                   style={{
                     fontSize: "16px",
                     background: "white",
-                    padding: "8px",
+                    lineHeight: "1.3em",
+                    padding: "12px",
                     borderRadius: "6px",
+                    fontWeight: "400",
+                    fontFamily: "Lato",
                   }}
                 >
                   {ticket.details}
