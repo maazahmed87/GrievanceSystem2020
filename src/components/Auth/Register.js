@@ -6,6 +6,7 @@ import {
   Form,
   Segment,
   Button,
+  Radio,
   Header,
   Message,
 } from "semantic-ui-react";
@@ -20,6 +21,8 @@ class Register extends React.Component {
     passwordConfirmation: "",
     errors: [],
     type: "",
+    value: "",
+    faculty: false,
     loading: false,
     usersRef: firebase.database().ref("users"),
   };
@@ -68,6 +71,15 @@ class Register extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  handleRadio = (e, { value }) => {
+    this.setState({ value });
+    if (value === "yes") {
+      this.setState({ faculty: true });
+    } else {
+      this.setState({ faculty: false });
+    }
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.isFormValid()) {
@@ -80,7 +92,6 @@ class Register extends React.Component {
           createdUser.user
             .updateProfile({
               displayName: this.state.username,
-              tenantId: this.state.usn,
               email: this.state.email,
               photoURL: `http://gravatar.com/avatar/${md5(
                 createdUser.user.email
@@ -115,6 +126,7 @@ class Register extends React.Component {
       name: createdUser.user.displayName,
       avatar: createdUser.user.photoURL,
       usn: u,
+      faculty: this.state.faculty,
       email: createdUser.user.email,
     });
   };
@@ -170,12 +182,36 @@ class Register extends React.Component {
                 type="email"
               />
 
+              <Segment.Group horizontal textAlign="left">
+                <Segment compact>Select account type:</Segment>
+                <Segment compact>
+                  <Radio
+                    label="Student"
+                    name="radioGroup"
+                    value="no"
+                    checked={this.state.value === "no"}
+                    onChange={this.handleRadio}
+                  />
+                </Segment>
+                <Segment compact>
+                  <Radio
+                    label="Faculty"
+                    name="radioGroup"
+                    value="yes"
+                    checked={this.state.value === "yes"}
+                    onChange={this.handleRadio}
+                  />
+                </Segment>
+              </Segment.Group>
+
               <Form.Input
                 fluid
                 name="usn"
-                icon="mail"
+                icon="asterisk"
                 iconPosition="left"
-                placeholder="University Serial Number"
+                placeholder={
+                  this.state.faculty ? "Faculty ID" : "Universal Serial Number"
+                }
                 onChange={this.handleChange}
                 value={usn}
                 className={this.handleInputError(errors, "usn")}
