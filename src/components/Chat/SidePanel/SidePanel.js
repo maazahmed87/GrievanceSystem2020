@@ -16,7 +16,7 @@ class SidePanel extends React.Component {
         inverted
         vertical
         style={{
-          background: primaryColor,
+          background: "#4c3c4c",
           fontSize: "1.2rem",
           paddingLeft: "5px",
         }}

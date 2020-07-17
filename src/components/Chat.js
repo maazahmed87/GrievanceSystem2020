@@ -40,8 +40,6 @@ const mapStateToProps = (state) => ({
   currentChannel: state.channel.currentChannel,
   isPrivateChannel: state.channel.isPrivateChannel,
   userPosts: state.channel.userPosts,
-  primaryColor: state.colors.primaryColor,
-  secondaryColor: state.colors.secondaryColor,
 });
 
 export default connect(mapStateToProps)(Chat);

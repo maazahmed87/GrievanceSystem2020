@@ -14,7 +14,7 @@ class Landing extends React.Component {
           <Col xs="12" lg="12" sm="12" md="12" id={styles.landbox}>
             <span id={styles.landtext}>Grievance System</span>
             <br />
-            <div className={styles.landsub}>Some random text</div>
+            <div className={styles.landsub}>Report your grievances here</div>
             <Link
               className={styles.underline_btn}
               style={{ color: "#1c1c1c" }}
