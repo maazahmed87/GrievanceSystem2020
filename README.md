@@ -10,6 +10,10 @@ Javascript ES6, HTML, CSS
 
 React, Semantic UI, Bootstrap
 
+## Other plugins
+
+ChartJS
+
 ## Database
 
 Firebase realtime database

@@ -940,8 +940,8 @@ class Ticket extends React.Component {
           />
 
           {userType === "user" && (
-            <Button primary onClick={this.openModalT}>
-              Create a Complaint Ticket &nbsp;&nbsp;
+            <Button compact primary onClick={this.openModalT}>
+              Write a Complaint &nbsp;
               <Icon name="write" />
             </Button>
           )}
