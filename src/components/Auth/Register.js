@@ -11,6 +11,7 @@ import {
   Message,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import styles from "../Button.module.css";
 
 class Register extends React.Component {
   state = {
@@ -152,7 +153,12 @@ class Register extends React.Component {
     } = this.state;
 
     return (
-      <Grid textAlign="center" verticalAlign="middle" className="app">
+      <Grid
+        textAlign="center"
+        verticalAlign="middle"
+        className="app"
+        id={styles.registrationback}
+      >
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h1" icon color="blue" textAlign="center">
             Sign Up

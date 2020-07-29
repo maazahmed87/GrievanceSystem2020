@@ -9,7 +9,7 @@ import {
   Icon,
   Message,
 } from "semantic-ui-react";
-
+import styles from "../Button.module.css";
 import {
   BrowserRouter as Router,
   Switch,
@@ -73,7 +73,12 @@ class Reset extends React.Component {
     const { email, errors, loading, display } = this.state;
 
     return (
-      <Grid textAlign="center" verticalAlign="middle" className="app">
+      <Grid
+        textAlign="center"
+        verticalAlign="middle"
+        className="app"
+        id={styles.resetback}
+      >
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h1" color="blue" textAlign="center" size="large" icon>
             <Icon name="repeat" />

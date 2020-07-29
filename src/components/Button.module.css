@@ -5,13 +5,66 @@
 }
 
 #landingback {
-  background-image: url("812.jpg");
-  background-position: center center;
+  background-image: url("./svg/test3.svg"), url("./svg/test4.svg");
+  background-position: right top, left bottom;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-size: cover;
+  background-size: 33%;
   height: 100vh;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+}
+
+@media (max-width: 450px) {
+  #landingback {
+    background-position: top top, bottom bottom;
+    background-size: 65%;
+  }
+
+  #loginback {
+    background-position: top top, bottom bottom;
+    background-size: 65%;
+    overflow-y: hidden !important;
+  }
+  #registrationback {
+    background-position: top top, bottom bottom;
+    background-size: 65%;
+    overflow-y: hidden !important;
+  }
+  #resetback {
+    background-position: top top;
+    background-size: 65%;
+    overflow-y: hidden !important;
+  }
+}
+
+#loginback {
+  background-image: url("./svg/notebook.svg"), url("./svg/login.svg");
+  background-position: right top, left bottom;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 33%;
+  height: 100vh;
+  overflow-x: hidden !important;
+}
+
+#registrationback {
+  background-image: url("./svg/registration.svg"), url("./svg/check.svg");
+  background-position: right top, left bottom;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 33%;
+  height: 100vh;
+  overflow-x: hidden !important;
+}
+
+#resetback {
+  background-image: url("./svg/forgot.svg");
+  background-position: right top, left bottom;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 33%;
+  height: 100vh;
+  overflow-x: hidden !important;
 }
 
 #landbox {

@@ -10,6 +10,7 @@ import {
   Divider,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import styles from "../Button.module.css";
 
 class Login extends React.Component {
   state = {
@@ -60,7 +61,12 @@ class Login extends React.Component {
     const { email, password, errors, loading } = this.state;
 
     return (
-      <Grid textAlign="center" verticalAlign="middle" className="app">
+      <Grid
+        textAlign="center"
+        verticalAlign="middle"
+        className="app"
+        id={styles.loginback}
+      >
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h1" icon color="blue" textAlign="center">
             Login
