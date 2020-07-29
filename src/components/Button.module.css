@@ -22,17 +22,18 @@
 
   #loginback {
     background-position: top top, bottom bottom;
-    background-size: 65%;
+    background-size: 75%;
     overflow-y: hidden !important;
   }
   #registrationback {
     background-position: top top, bottom bottom;
-    background-size: 65%;
+    background-size: 75%;
     overflow-y: hidden !important;
   }
   #resetback {
     background-position: top top;
-    background-size: 65%;
+    background-size: 75%;
+    height: 100vh !important;
     overflow-y: hidden !important;
   }
 }
