@@ -1,4 +1,4 @@
-# Restaurant-Database-Management-System
+# Grievance System
 
 This web application allows the concerned users and admins to communicate regarding the grievances with the provided features in order to simplify the tedious procedure of listing the grievances.
 
