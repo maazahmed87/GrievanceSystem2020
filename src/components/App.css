@@ -274,6 +274,21 @@ body,
   #center-modal {
     top: 30vh;
   }
+  #ticketback {
+    background-position: bottom bottom;
+    background-size: 100%;
+    height: 100vh !important;
+  }
+}
+
+#ticketback {
+  background-image: url("./svg/ticket.svg");
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 23%;
+  height: 100vh;
+  overflow-x: hidden !important;
 }
 
 #center-modal {

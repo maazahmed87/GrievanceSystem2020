@@ -920,7 +920,7 @@ class Ticket extends React.Component {
     } = this.state;
 
     return (
-      <Container className="white-back">
+      <Container className="white-back" id="ticketback">
         <center>
           <h2 style={{ color: "black", margin: "10px 0px" }}>Complaints</h2>
         </center>
