@@ -4,19 +4,15 @@ This web application allows the concerned users and admins to communicate regard
 
 ## Language used
 
-Javascript ES6, HTML, CSS
+<img align="left" alt="HTML5" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/html/html.png" />
+<img align="left" alt="CSS3" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/css/css.png" />
+<img align="left" alt="JavaScript" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png" />
+<img align="left" alt="React" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/react/react.png" />
+<img align="left" alt="Bootstrap" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/bootstrap/bootstrap.png" />
+<img align="left" alt="Firebase" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/firebase/firebase.png" />
+<img align="left" alt="Redux" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/redux/redux.png" />
+<br />
 
-## Frameworks used
-
-React, Semantic UI, Bootstrap
-
-## Other plugins
-
-ChartJS
-
-## Database
-
-Firebase realtime database
 
 ## TODO
 
@@ -25,6 +21,7 @@ Firebase realtime database
 3. Improve UI.
 4. Add feature for admin report generation.
 5. Improve Profile section and information for both user and admin.
+6. Re-do the entire navigation using react-router
 
 ## LANDING PAGE
 
