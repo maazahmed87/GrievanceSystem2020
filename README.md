@@ -21,6 +21,7 @@ This web application allows the concerned users and admins to communicate regard
 3. Improve UI.
 4. Add feature for admin report generation.
 5. Improve Profile section and information for both user and admin.
+6. Re-do the entire navigation using react-router
 
 ## LANDING PAGE
 
