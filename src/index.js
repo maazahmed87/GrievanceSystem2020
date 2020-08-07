@@ -22,12 +22,12 @@ import { createStore } from "redux";
 import { Provider, connect } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import rootReducer from "./reducers";
-import { setUser, clearUser } from "./actions";
+import { setUser, clearUser, clearTickets, clearUserDetails } from "./actions";
 
 const store = createStore(rootReducer, composeWithDevTools());
 
 class Root extends React.Component {
-  componentDidMount() {
+  componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // console.log(user);
@@ -36,6 +36,8 @@ class Root extends React.Component {
       } else {
         this.props.history.push("/");
         this.props.clearUser();
+        this.props.clearTickets();
+        this.props.clearUserDetails();
       }
     });
   }
@@ -60,7 +62,12 @@ const mapStateFromProps = (state) => ({
 });
 
 const RootWithAuth = withRouter(
-  connect(mapStateFromProps, { setUser, clearUser })(Root)
+  connect(mapStateFromProps, {
+    setUser,
+    clearUser,
+    clearTickets,
+    clearUserDetails,
+  })(Root)
 );
 
 ReactDOM.render(

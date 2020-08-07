@@ -16,6 +16,17 @@ export const clearUser = () => {
   };
 };
 
+export const clearTickets = () => {
+  return {
+    type: actionTypes.CLEAR_TICKETS,
+  };
+};
+
+export const clearUserDetails = () => {
+  return {
+    type: actionTypes.CLEAR_USER_DETAILS,
+  };
+};
 /* Channel Actions */
 export const setCurrentChannel = (channel) => {
   return {
@@ -44,13 +55,21 @@ export const setUserPosts = (userPosts) => {
   };
 };
 
-/* Colors Actions */
-export const setColors = (primaryColor, secondaryColor) => {
+//
+export const setTickets = (posts) => {
   return {
-    type: actionTypes.SET_COLORS,
+    type: actionTypes.SET_TICKETS,
     payload: {
-      primaryColor,
-      secondaryColor,
+      tickets: posts,
+    },
+  };
+};
+
+export const setUserDetails = (details) => {
+  return {
+    type: actionTypes.SET_USER_DETAILS,
+    payload: {
+      userDetails: details,
     },
   };
 };

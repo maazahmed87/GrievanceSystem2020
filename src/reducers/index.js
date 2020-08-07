@@ -15,8 +15,38 @@ const user_reducer = (state = initialUserState, action) => {
       };
     case actionTypes.CLEAR_USER:
       return {
-        ...state,
+        currentUser: null,
         isLoading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+const initialTicketState = {
+  userDetails: null,
+  tickets: [],
+};
+
+const ticket_reducer = (state = initialTicketState, action) => {
+  switch (action.type) {
+    case actionTypes.SET_TICKETS:
+      return {
+        ...state,
+        tickets: action.payload.tickets,
+      };
+    case actionTypes.SET_USER_DETAILS:
+      return {
+        ...state,
+        userDetails: action.payload.userDetails,
+      };
+    case actionTypes.CLEAR_USER_DETAILS:
+      return {
+        userDetails: null,
+      };
+    case actionTypes.CLEAR_TICKETS:
+      return {
+        tickets: [],
       };
     default:
       return state;
@@ -41,11 +71,7 @@ const channel_reducer = (state = initialChannelState, action) => {
         ...state,
         isPrivateChannel: action.payload.isPrivateChannel,
       };
-    case actionTypes.SET_USER_POSTS:
-      return {
-        ...state,
-        userPosts: action.payload.userPosts,
-      };
+
     default:
       return state;
   }
@@ -54,6 +80,7 @@ const channel_reducer = (state = initialChannelState, action) => {
 const rootReducer = combineReducers({
   user: user_reducer,
   channel: channel_reducer,
+  tickets: ticket_reducer,
 });
 
 export default rootReducer;

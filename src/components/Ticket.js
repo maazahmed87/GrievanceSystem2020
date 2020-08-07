@@ -1,9 +1,11 @@
 import React, { Fragment } from "react";
 import firebase from "../firebase";
 import { v4 as uuidv4 } from "uuid";
+import { connect } from "react-redux";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
+import { setTickets, setUserDetails } from "../actions/index.js";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -274,6 +276,7 @@ class Ticket extends React.Component {
     let user = this.state.user;
     this.state.usersRef.on("child_added", (snap) => {
       if (user.email === snap.val().email) {
+        this.props.setUserDetails(snap.val());
         if (snap.val().type === "admin") {
           this.setState({ userType: "admin", domain: snap.val().domain });
           console.log(snap.val().type);
@@ -314,6 +317,7 @@ class Ticket extends React.Component {
       }
 
       this.setState({ tickets: loadedTickets, loading: false });
+      this.props.setTickets(loadedTickets);
       this.getRandomColor();
     });
   };
@@ -1121,4 +1125,9 @@ class Ticket extends React.Component {
   }
 }
 
-export default Ticket;
+const mapStateToProps = (state) => ({
+  tickets: state.tickets.tickets,
+  userDetails: state.userDetails,
+});
+
+export default connect(null, { setTickets, setUserDetails })(Ticket);
