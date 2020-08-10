@@ -6,11 +6,15 @@ class Account extends React.Component {
   state = {
     user: this.props.currentUser,
     usersRef: firebase.database().ref("users"),
-    name: this.props.currentUser.displayName,
-    email: this.props.currentUser.email,
+    name: this.props.userDetails.name,
+    email: this.props.userDetails.email,
     photo: this.props.currentUser.photoURL,
-    details: [],
+    details: "",
     loading: false,
+    domain: this.props.userDetails.domain,
+    ssid: this.props.userDetails.ssid,
+    faculty: this.props.userDetails.faculty,
+    type: this.props.userDetails.type,
   };
 
   componentDidMount() {
@@ -33,44 +37,28 @@ class Account extends React.Component {
     });
   };
 
-  displayUser = (details) =>
-    details > 0 &&
-    details.map((detail) => (
-      <Form.Group>
-        <Form.Field
-          width="8"
-          control={Input}
-          label="USN"
-          placeholder="USN"
-          name="email"
-          value={detail.usn}
-          readOnly
-        />
-      </Form.Group>
-    ));
-
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
   render() {
-    const { details } = this.state;
+    const { type, email, name, faculty, domain, ssid, loading } = this.state;
 
     return (
-      <Fragment>
+      <Fragment style={{ textTransform: "capitalize" }}>
         <center>
           <h2 style={{ color: "black", margin: "10px 0px" }}>Account Info</h2>
-          <Image src={this.state.photo} size="small" circular />
+          <Image src={this.state.photo} size="tiny" circular />
         </center>
-        <Form>
+        <Form loading={loading} style={{ margin: "0px 15px" }}>
           <Form.Group>
             <Form.Field
               control={Input}
-              width="8"
+              width="6"
               label="Full Name"
               placeholder="Full Name"
               name="name"
-              value={this.state.name}
+              value={name}
               onChange={this.handleChange}
             />
           </Form.Group>
@@ -81,11 +69,38 @@ class Account extends React.Component {
               label="Email"
               placeholder="Email"
               name="email"
-              value={this.state.details}
+              value={email}
               readOnly
             />
+
+            {type !== "admin" && (
+              <Form.Field
+                width="8"
+                control={Input}
+                label={faculty === true ? "SSID" : "USN"}
+                placeholder={faculty ? "SSID" : "USN"}
+                name="ssid"
+                value={ssid}
+                readOnly
+                style={{
+                  textTransform: "uppercase!important",
+                  fontWeight: "bold",
+                }}
+              />
+            )}
+
+            {type === "admin" && (
+              <Form.Field
+                width="8"
+                control={Input}
+                label="Department"
+                placeholder="Department"
+                name="domain"
+                value={domain}
+                readOnly
+              />
+            )}
           </Form.Group>
-          {this.displayUser(this.state.details)}
         </Form>
       </Fragment>
     );
