@@ -45,6 +45,7 @@ const options = [
 class Ticket extends React.Component {
   state = {
     user: this.props.currentUser,
+    userDetails: "",
     userType: "",
     domain: "",
     tickets: [],
@@ -103,6 +104,14 @@ class Ticket extends React.Component {
   }
   componentWillMount() {
     this.addListeners();
+  }
+  componentWillReceiveProps(props) {
+    this.setState({
+      userDetails: props.userDetails,
+      userType: props.userDetails.type,
+      faulty: props.userDetails.faculty,
+      domain: props.userDetails.domain,
+    });
   }
 
   componentWillUnmount() {
@@ -277,20 +286,6 @@ class Ticket extends React.Component {
     this.state.usersRef.on("child_added", (snap) => {
       if (user.email === snap.val().email) {
         this.props.setUserDetails(snap.val());
-        if (snap.val().type === "admin") {
-          this.setState({ userType: "admin", domain: snap.val().domain });
-          console.log(snap.val().type);
-        } else {
-          this.setState({ userType: "user" });
-          console.log(snap.val().type);
-        }
-        if (snap.val().faculty) {
-          this.setState({ faculty: true });
-          console.log(snap.val().faculty);
-        } else {
-          this.setState({ faculty: false });
-          console.log(snap.val().faculty);
-        }
       }
     });
     this.getTickets();
@@ -315,7 +310,6 @@ class Ticket extends React.Component {
         console.log(res[1]);
         loadedTickets.push(snap.val());
       }
-
       this.setState({ tickets: loadedTickets, loading: false });
       this.props.setTickets(loadedTickets);
       this.getRandomColor();
@@ -1125,9 +1119,4 @@ class Ticket extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  tickets: state.tickets.tickets,
-  userDetails: state.userDetails,
-});
-
-export default connect(null, { setTickets, setUserDetails })(Ticket);
+export default connect(null, { setUserDetails, setTickets })(Ticket);

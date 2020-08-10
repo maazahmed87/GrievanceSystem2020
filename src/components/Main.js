@@ -50,7 +50,7 @@ class Main extends React.Component {
   };
 
   render() {
-    const { currentUser } = this.props;
+    const { currentUser, userDetails } = this.props;
     const { active, search } = this.state;
 
     return (
@@ -160,9 +160,15 @@ class Main extends React.Component {
                 callBackOption={this.myCallback2}
               />
             )}
-            {active === "account" && <Account currentUser={currentUser} />}
+            {active === "account" && (
+              <Account currentUser={currentUser} userDetails={userDetails} />
+            )}
             {active === "tickets" && (
-              <Ticket currentUser={currentUser} term={search} />
+              <Ticket
+                currentUser={currentUser}
+                term={search}
+                userDetails={userDetails}
+              />
             )}
             {active === "chat" && <Chat />}
             <button
