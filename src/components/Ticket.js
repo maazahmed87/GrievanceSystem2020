@@ -1,12 +1,11 @@
 import React, { Fragment } from "react";
 import firebase from "../firebase";
 import { v4 as uuidv4 } from "uuid";
-import { connect } from "react-redux";
 import moment from "moment";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import { setTickets, setUserDetails } from "../actions/index.js";
-
+import { connect } from "react-redux";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -105,20 +104,21 @@ class Ticket extends React.Component {
   componentWillMount() {
     this.addListeners();
   }
-  componentWillReceiveProps(props) {
-    this.setState({
-      userDetails: props.userDetails,
-      userType: props.userDetails.type,
-      faulty: props.userDetails.faculty,
-      domain: props.userDetails.domain,
-    });
-  }
 
   componentWillUnmount() {
     if (this.state.uploadTask !== null) {
       this.state.uploadTask.cancel();
       this.setState({ uploadTask: null });
     }
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      userDetails: props.userDetails,
+      userType: props.userDetails.type,
+      faculty: props.userDetails.faculty,
+      domain: props.userDetails.domain,
+    });
   }
   createMessage = (fileUrl = null, name) => {
     const message = {
@@ -285,6 +285,20 @@ class Ticket extends React.Component {
     let user = this.state.user;
     this.state.usersRef.on("child_added", (snap) => {
       if (user.email === snap.val().email) {
+        if (snap.val().type === "admin") {
+          this.setState({ userType: "admin", domain: snap.val().domain });
+          console.log(snap.val().type);
+        } else {
+          this.setState({ userType: "user" });
+          console.log(snap.val().type);
+        }
+        if (snap.val().faculty) {
+          this.setState({ faculty: true });
+          console.log(snap.val().faculty);
+        } else {
+          this.setState({ faculty: false });
+          console.log(snap.val().faculty);
+        }
         this.props.setUserDetails(snap.val());
       }
     });
@@ -304,12 +318,9 @@ class Ticket extends React.Component {
         this.state.userType === "user" &&
         user.email === snap.val().createdBy.email
       ) {
-        var date = new Date(snap.val().timestamp);
-        var str = date.toString();
-        var res = str.split(" ");
-        console.log(res[1]);
         loadedTickets.push(snap.val());
       }
+
       this.setState({ tickets: loadedTickets, loading: false });
       this.props.setTickets(loadedTickets);
       this.getRandomColor();
