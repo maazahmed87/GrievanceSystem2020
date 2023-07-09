@@ -129,6 +129,7 @@ class Register extends React.Component {
       usn: u,
       faculty: this.state.faculty,
       email: createdUser.user.email,
+      type: 'user'
     });
   };
 
